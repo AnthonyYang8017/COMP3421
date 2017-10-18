@@ -42,39 +42,39 @@ public class Cylinder extends GameObject {
     	double z1 = 0;
     	double z2 = height;
     	
-    	//Front circle
-    	gl.glBegin(GL2.GL_TRIANGLE_FAN);{
-    	
-    		 gl.glNormal3d(0,0,1);
-    		 gl.glVertex3d(0,0,z1);
-    		 double angleStep = 2*Math.PI/slices;
-             for (int i = 0; i <= slices ; i++){
-                 double a0 = i * angleStep;
-                 double x0 = radius*Math.cos(a0);
-                 double y0 = radius*Math.sin(a0);
-
-                gl.glVertex3d(x0,y0,z1);
-              
-             }                
-    	}gl.glEnd();
-    	
-    	//Back circle
-    	gl.glBegin(GL2.GL_TRIANGLE_FAN);{
-       
-   		 gl.glNormal3d(0,0,-1);
-   		 gl.glVertex3d(0,0,z2);
-   		 double angleStep = 2*Math.PI/slices;
-            for (int i = 0; i <= slices ; i++){
-            	double a0 = 2*Math.PI - i * angleStep;
-                            
-                double x0 = radius*Math.cos(a0);
-                double y0 = radius*Math.sin(a0);
-
-                gl.glVertex3d(x0,y0,z2);
-            }
-                
-                
-    	}gl.glEnd();
+//    	//Front circle
+//    	gl.glBegin(GL2.GL_TRIANGLE_FAN);{
+//    	
+//    		 gl.glNormal3d(0,0,1);
+//    		 gl.glVertex3d(0,0,z1);
+//    		 double angleStep = 2*Math.PI/slices;
+//             for (int i = 0; i <= slices ; i++){
+//                 double a0 = i * angleStep;
+//                 double x0 = radius*Math.cos(a0);
+//                 double y0 = radius*Math.sin(a0);
+//
+//                gl.glVertex3d(x0,y0,z1);
+//              
+//             }                
+//    	}gl.glEnd();
+//    	
+//    	//Back circle
+//    	gl.glBegin(GL2.GL_TRIANGLE_FAN);{
+//       
+//   		 gl.glNormal3d(0,0,-1);
+//   		 gl.glVertex3d(0,0,z2);
+//   		 double angleStep = 2*Math.PI/slices;
+//            for (int i = 0; i <= slices ; i++){
+//            	double a0 = 2*Math.PI - i * angleStep;
+//                            
+//                double x0 = radius*Math.cos(a0);
+//                double y0 = radius*Math.sin(a0);
+//
+//                gl.glVertex3d(x0,y0,z2);
+//            }
+//                
+//                
+//    	}gl.glEnd();
     	  
     	//Sides of the cylinder
     	gl.glBegin(GL2.GL_QUADS);
