@@ -126,16 +126,23 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 	public void init(GLAutoDrawable drawable) {
 		// TODO Auto-generated method stub
 		GL2 gl = drawable.getGL().getGL2();
+		
 		//enable depth testing
     	gl.glEnable(GL2.GL_DEPTH_TEST);
-    	 // enable lighting
+    	 
+    	// enable lighting
         gl.glEnable(GL2.GL_LIGHTING);
         // turn on a light. Use default settings.
         gl.glEnable(GL2.GL_LIGHT0);
-        
         // normalise normals (!)
         // this is necessary to make lighting work properly
         gl.glEnable(GL2.GL_NORMALIZE);
+        
+        //Texture initialisation
+        String groundTextureFileName1 = "src/ass2/grass.bmp";
+        MyTexture groundTexture = new MyTexture(gl,groundTextureFileName1,"bmp",true);
+        myTerrain.setGroundTexture(groundTexture);
+        gl.glEnable(GL2.GL_TEXTURE_2D); 
         
         myTerrain.addAvatar();
     	
