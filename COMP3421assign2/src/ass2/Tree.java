@@ -13,9 +13,6 @@ public class Tree extends GameObject {
 	private Cylinder myCylinder;
 	private Sphere mySphere;
     
-    public Tree() {
-    	this(GameObject.ROOT);
-    }
     
     public Tree(GameObject parent) {
     	super(parent);

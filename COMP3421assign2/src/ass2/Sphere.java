@@ -24,6 +24,13 @@ public class Sphere extends GameObject {
 		gl.glPushMatrix();
 		//gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
     	//gl.glColor3f(1,0,0);
+		float[] ambient = {0.2f, 0.3f, 0.1f, 1.0f};
+	    float[] diffuse = {0.2f, 0.3f, 0.1f, 1.0f};
+	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+		
 		
 		GLUT glut = new GLUT();
 //		radius-The radius of the sphere.

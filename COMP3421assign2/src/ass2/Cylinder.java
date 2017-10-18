@@ -30,6 +30,12 @@ public class Cylinder extends GameObject {
 	
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
+		float[] ambient = {0.4f, 0.4f, 0.2f, 1.0f};
+	    float[] diffuse = {0.4f, 0.4f, 0.2f, 1.0f};
+	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
     	//gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
     	//gl.glColor3f(1,0,0);
 		gl.glRotated(-90,1,0,0);

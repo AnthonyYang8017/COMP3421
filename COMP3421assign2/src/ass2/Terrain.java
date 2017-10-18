@@ -16,12 +16,13 @@ import ass2.MathUtil;
  *
  * @author malcolmr
  */
-public class Terrain {
+public class Terrain extends GameObject {
 
     private Dimension mySize;
-    private double[][] myAltitude;
+    private static double[][] myAltitude;
     private List<Tree> myTrees;
     private List<Road> myRoads;
+    private Avatar myAvatar;
     private float[] mySunlight;
 
     /**
@@ -30,7 +31,11 @@ public class Terrain {
      * @param width The number of vertices in the x-direction
      * @param depth The number of vertices in the z-direction
      */
+    public Terrain(GameObject parent) {
+		super(parent);
+	}
     public Terrain(int width, int depth) {
+    	this(GameObject.ROOT);
         mySize = new Dimension(width, depth);
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
@@ -65,7 +70,7 @@ public class Terrain {
      * @param z
      * @return
      */
-    public double getGridAltitude(int x, int z) {
+    public static double getGridAltitude(int x, int z) {
         return myAltitude[x][z];
     }
     
@@ -123,10 +128,27 @@ public class Terrain {
      * @param z
      * @return
      */
-    public double altitude(double x, double z) {
+    public static double altitude(double x, double z) {
         double altitude = 0;
-
-        
+        double i = (double)(int) x;
+        double j = (double)(int) z;
+        double heightXZ = getGridAltitude((int)i,(int)j);
+        double heightX1Z = getGridAltitude((int)i+1,(int)j);
+        double heightXZ1 = getGridAltitude((int)i,(int)j+1);
+        double heightX1Z1 = getGridAltitude((int)i+1,(int)j+1);
+        double temi = x-i;
+        double temj = z-j;
+        if (temi + temj <= 1){
+        	altitude = (heightXZ + (heightX1Z - heightXZ)*temi)
+        			+((heightXZ1 + (heightX1Z - heightXZ1)*temi)
+        			-(heightXZ + (heightX1Z - heightXZ)*temi))
+        			*(temj/Math.sqrt(2));
+        }else{
+        	altitude =(heightXZ1 + (heightX1Z - heightXZ1)*temi)
+        			+((heightXZ1 + (heightX1Z1 - heightXZ1)*temi)
+        			-(heightXZ1 + (heightX1Z - heightXZ1)*temi))
+        			*(temj/Math.sqrt(2));
+        }
         
         return altitude;
     }
@@ -139,9 +161,8 @@ public class Terrain {
      * @param z
      */
     public void addTree(double x, double z) {
-        //double y = altitude(x, z);
-    	double y = getGridAltitude((int)x, (int)z);
-        Tree tree = new Tree();
+        double y = altitude(x, z);
+        Tree tree = new Tree(this);
         tree.setPosition(x, y, z);
         myTrees.add(tree);
     }
@@ -157,38 +178,34 @@ public class Terrain {
         Road road = new Road(width, spine);
         myRoads.add(road);        
     }
+    
+    public void addAvatar() {
+    	myAvatar = new Avatar(this);
+    	myAvatar.setPosition(0,altitude(0,0),0);
+    }
 
-	public void drawTerrain(GL2 gl) {
+	public void drawSelf(GL2 gl) {
 		
 		gl.glPushMatrix();
-		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
-		gl.glTranslated(-10, 0, -10);
+		
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		gl.glColor4d(0, 1, 0, 0);
+		//gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+		//gl.glColor4d(0, 0, 0, 0);
 		gl.glLineWidth(10);
 		
-		float[] ambient = {0.2f, 0.4f, 0.2f, 1.0f};
-	    float[] diffuse = {0.2f, 0.4f, 0.2f, 1.0f};
-	    float[] specular = {0.0f, 0.1f, 0.0f, 1.0f};
+		float[] ambient = {0.1f, 0.5f, 0.1f, 1.0f};
+	    float[] diffuse = {0.1f, 0.5f, 0.1f, 1.0f};
+	    float[] specular = {0.1f, 0.1f, 0.1f, 1.0f};
 	  
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
-		
+	 
 	    for (int z = 0; z < mySize.height -1; z++) {
 	        for (int x = 0; x < mySize.width -1; x++) {
 	        	double[] v;
-	        	//double[] v1 = {x, getGridAltitude(x, z), z};
-	            //double[] v2 = {x, getGridAltitude(x, z + 1), z + 1};
-	            //double[] v3 = {x + 1, getGridAltitude(x + 1, z), z};
-	            //double[] v4 = {x + 1, getGridAltitude(x + 1, z + 1), z + 1};
-	            //v = MathUtil.getNormal(v1, v2, v3);
-	            //gl.glNormal3dv(v, 0);
 	            gl.glBegin(GL2.GL_TRIANGLES);
 	            {
-	            	
-	              //gl.glColor3f(0.0f, 1.0f, 0.0f); //Green colour (does nothing if lighting enabled)
 	              
 	              v = NormalProcesser(x, getGridAltitude(x, z), z);
 	              gl.glNormal3d(v[0],v[1],v[2]);
@@ -204,12 +221,8 @@ public class Terrain {
 	            }
 	            gl.glEnd();
 	            
-	            //double[] v5 = MathUtil.getNormal(v3, v2, v4);
-	            //gl.glNormal3dv(v5, 0);
-	            
 	            gl.glBegin(GL2.GL_TRIANGLES);
 	            {
-	              //gl.glColor3f(0.0f, 1.0f, 0.0f); //Green colour (does nothing if lighting enabled)
 	              
 	              v = NormalProcesser(x + 1, getGridAltitude(x + 1, z), z);
 	              gl.glNormal3d(v[0],v[1],v[2]);
@@ -226,13 +239,19 @@ public class Terrain {
 	            gl.glEnd();
 	        }
 	    }
-	    //draw tree
-	    GameObject.ROOT.draw(gl);
 	    
 	    gl.glPopMatrix();
 	    gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 	    
+	    myAvatar.setPosition(10-Game.positionX, altitude(10-Game.positionX,10-Game.positionZ), 10-Game.positionZ);
+	    
 	}
+	
+	public void update(double dt) {
+        // do nothing
+		//myAvatar.setPosition(Game.positionX-10, 0, Game.positionZ-10);
+		
+    }
 	
 	public double[] NormalProcesser(int x, double y, int z) {
 		double[] normal;
