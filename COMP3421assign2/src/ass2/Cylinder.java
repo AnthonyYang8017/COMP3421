@@ -7,6 +7,7 @@ public class Cylinder extends GameObject {
 	private double radius = 0.2;
 	private double height = 2;
 	private int slices = 16;
+	private MyTexture texture; 
 	
 	public Cylinder(GameObject parent) {
 		super(parent);
@@ -26,6 +27,10 @@ public class Cylinder extends GameObject {
 
 	public void setRadius(double radius) {
 		this.radius = radius;
+	}
+	
+	public void setTexture(MyTexture trunk){
+		texture = trunk;
 	}
 	
 	public void drawSelf(GL2 gl) {

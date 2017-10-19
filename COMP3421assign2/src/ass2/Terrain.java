@@ -428,4 +428,17 @@ public class Terrain extends GameObject {
 	public void setMyAvatarY(double myAvatarY) {
 		this.myAvatarY = myAvatarY;
 	}
+	
+	//set textures for each object
+    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road){
+		groundTexture = ground;
+		for(Tree t: myTrees){
+			t.setTexture(treeTop, treeTrunk);
+		}
+		for(Road r: myRoads){
+			r.setTexture(road);
+		}
+    	
+    	
+}
 }

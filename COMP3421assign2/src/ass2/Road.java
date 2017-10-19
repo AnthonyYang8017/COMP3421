@@ -17,6 +17,7 @@ public class Road extends GameObject {
     private List<Double> roadPoints;
     private List<Double> altitudes;
     private double startingAltitude;
+    private MyTexture texture;
     
     /** 
      * Create a new road starting at the specified point
@@ -99,6 +100,14 @@ public class Road extends GameObject {
      */
     public double width() {
         return myWidth;
+    }
+    
+    /**
+     * 
+     * @param texture
+     */
+    public void setTexture(MyTexture texture){
+    	this.texture = texture;
     }
 
     /**
@@ -242,6 +251,6 @@ public class Road extends GameObject {
 		
 		gl.glPopMatrix();
     }
-
+    
 
 }

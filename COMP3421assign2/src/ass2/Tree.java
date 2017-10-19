@@ -21,4 +21,9 @@ public class Tree extends GameObject {
     	mySphere = new Sphere(this);
     	mySphere.setPosition(0, 2, 0);
     }
+    
+    public void setTexture(MyTexture top, MyTexture trunk){
+    	mySphere.setTexture(top);
+    	myCylinder.setTexture(trunk);
+    }
 }

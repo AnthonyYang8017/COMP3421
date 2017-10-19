@@ -220,10 +220,18 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE); // Enable local viewpoint.
         
         //Texture initialisation
-        String groundTextureFileName1 = "src/ass2/grass.bmp";
-        MyTexture groundTexture = new MyTexture(gl,groundTextureFileName1,"bmp",true);
-        myTerrain.setGroundTexture(groundTexture);
-        gl.glEnable(GL2.GL_TEXTURE_2D); 
+        //Texture initialisation
+        String groundTextureFileName = "src/ass2/grass.bmp";
+        MyTexture groundTexture = new MyTexture(gl,groundTextureFileName,"bmp",true);
+        System.out.println(groundTexture.getTextureId());
+        String treeTopTextureFileName = "src/ass2/grass.bmp";
+        MyTexture treeTopTexture = new MyTexture(gl,treeTopTextureFileName,"bmp",true);
+        String treeTrunkTextureFileName = "src/ass2/grass.bmp";
+        MyTexture treeTrunkTexture = new MyTexture(gl,treeTrunkTextureFileName,"bmp",true);
+        String roadTextureFileName = "src/ass2/rock.bmp";
+        MyTexture roadTexture = new MyTexture(gl,roadTextureFileName,"bmp",true);
+        
+        myTerrain.setTextures(groundTexture, treeTopTexture, treeTrunkTexture, roadTexture);
         
         //Objects initialisation
         myTerrain.addAvatar();
