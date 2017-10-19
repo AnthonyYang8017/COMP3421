@@ -3,24 +3,33 @@ package ass2;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.jogamp.opengl.GL2;
+
 /**
  * COMMENT: Comment Road 
  *
  * @author malcolmr
  */
-public class Road {
+public class Road extends GameObject {
 
     private List<Double> myPoints;
     private double myWidth;
+    private List<Double> roadPoints;
+    
+    private double startingAltitude;
     
     /** 
      * Create a new road starting at the specified point
      */
-    public Road(double width, double x0, double y0) {
-        myWidth = width;
+    public Road(GameObject parent, double width, double x0, double y0, double altitude) {
+        super(parent);
+    	myWidth = width;
         myPoints = new ArrayList<Double>();
+        roadPoints = new ArrayList<Double>();
         myPoints.add(x0);
         myPoints.add(y0);
+        
+        generateRoad();
     }
 
     /**
@@ -29,12 +38,53 @@ public class Road {
      * @param width
      * @param spine
      */
-    public Road(double width, double[] spine) {
+    public Road(GameObject parent,double width, double[] spine, double altitude) {
+    	super(parent);
         myWidth = width;
         myPoints = new ArrayList<Double>();
+        roadPoints = new ArrayList<Double>();
         for (int i = 0; i < spine.length; i++) {
             myPoints.add(spine[i]);
         }
+        
+        generateRoad();
+    }
+    
+    /**
+     * Generate points along the side of the road
+     */
+    private void generateRoad(){	
+    	double increment = (size()/(double)20);
+    	//List<Double> otherSide = new ArrayList<Double>();  ;;
+    	for(double t = increment; t<(size() -increment) ; t= t+increment ){
+    		double[] p_before = point(t-increment);
+    		double[] p = point(t);
+    		double[] p_after = point(t+increment);
+    		double[]tangent =  new double[2];
+    		tangent[0]  = p[0] - p_before[0];
+    		tangent[1] = p[1] - p_before[1];
+    		
+    		//get unscaled normals
+    		double[] normal1 = new double[2];
+    		normal1[0] = tangent[1];
+    		normal1[1] = -tangent[0];
+    		
+    		//scale normals
+    		double normalMagnitude =  Math.sqrt( normal1[0]*normal1[0] + normal1[1]*normal1[1] ); //magnitude should be same for both    		
+    		normal1[0] /= normalMagnitude;
+    		normal1[0] *= width()/2;
+    		normal1[1] /= normalMagnitude;
+    		normal1[1] *= width()/2;
+    		//System.out.println("normal length: "+ Math.sqrt( normal1[0]*normal1[0] + normal1[1]*normal1[1] ) / width());
+    		
+    		//add points for spline point t
+    		//System.out.println(roadPoints.size());
+    		roadPoints.add(p[0] - normal1[0] );
+    		roadPoints.add(p[1] - normal1[1] ); 
+    		
+    		roadPoints.add(p[0] + normal1[0] );
+    		roadPoints.add(p[1] + normal1[1] );  		
+    	}
     }
 
     /**
@@ -118,6 +168,7 @@ public class Road {
         return p;
     }
     
+    
     /**
      * Calculate the Bezier coefficients
      * 
@@ -144,6 +195,45 @@ public class Road {
         
         // this should never happen
         throw new IllegalArgumentException("" + i);
+    }
+    
+    
+    public void drawSelf(GL2 gl) {
+    	gl.glPushMatrix();
+		/*gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
+		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
+		*/
+		//gl.glColor4d(1, 0, 0, 0);
+		
+//		gl.glLineWidth((float) 0.2);
+		
+    	System.out.println("road");
+		/*
+    	gl.glBegin(GL2.GL_LINES);{
+    		for(int i = 0; i<myPoints.size()-1;i+=2){
+    			gl.glVertex3d(myPoints.get(i), 1, roadPoints.get(i+1));
+    		}
+    	}
+    	gl.glEnd();*/
+		
+    	
+		gl.glBegin(GL2.GL_QUADS);
+        {
+	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
+	        	System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
+	        	gl.glVertex3d(roadPoints.get(i), 2, roadPoints.get(i+1));
+	        	gl.glVertex3d(roadPoints.get(i+2), 2, roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+6),2, roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+4), 2, roadPoints.get(i+5));
+	        	
+	        } 
+        }
+        gl.glEnd();
+		
+		
+		gl.glPopMatrix();
     }
 
 

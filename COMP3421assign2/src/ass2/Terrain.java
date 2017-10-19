@@ -194,7 +194,7 @@ public class Terrain extends GameObject {
      * @param z
      */
     public void addRoad(double width, double[] spine) {
-        Road road = new Road(width, spine);
+    	Road road = new Road(this, width, spine, altitude(spine[0], spine[1]));
         myRoads.add(road);        
     }
     
