@@ -3,6 +3,7 @@ package ass2;
 import java.awt.Dimension;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
@@ -18,12 +19,19 @@ import ass2.MathUtil;
  */
 public class Terrain extends GameObject {
 
-    private Dimension mySize;
+    private static Dimension mySize;
     private static double[][] myAltitude;
     private List<Tree> myTrees;
     private List<Road> myRoads;
-    private Avatar myAvatar;
+    static Avatar myAvatar;
+    private List<Zombie> myZombies;
+    private Portals myPortals;
+    private Integer PortalA;
+    private Integer PortalB;
+    private static double myAvatarY = 0.75;
     private float[] mySunlight;
+    private boolean forwardPortal = true;
+    
 
     private MyTexture groundTexture;
     
@@ -42,7 +50,9 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
+        myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
+        
     }
     
     public Terrain(Dimension size) {
@@ -77,7 +87,10 @@ public class Terrain extends GameObject {
      * @return
      */
     public static double getGridAltitude(int x, int z) {
-        return myAltitude[x][z];
+    	if(x+1<=mySize.width&&z+1<=mySize.height&&x>=0&&z>=0){
+    		return myAltitude[x][z];
+    	}
+        return 0.0;
     }
     
     /**
@@ -187,13 +200,42 @@ public class Terrain extends GameObject {
     
     public void addAvatar() {
     	myAvatar = new Avatar(this);
-    	myAvatar.setPosition(0,altitude(0,0),0);
+    	myAvatar.setPosition(0,altitude(0,0)+getMyAvatarY(),0);
+    	double[] scale = new double[]{0.5,0.45,0.5};
+    	myAvatar.setScale(scale);
+	}
+    
+    public void addZombie() {
+    	Zombie myZombie = new Zombie(this);
+    	double randomNum = ThreadLocalRandom.current().nextDouble(0,1);
+    	double randomNumX = (randomNum * (mySize.width-1));
+    	randomNum = ThreadLocalRandom.current().nextDouble(0,1);
+    	double randomNumY = (randomNum * (mySize.height-1));
+    	myZombie.setPosition(randomNumX,altitude(randomNumX,randomNumY)+getMyAvatarY(),randomNumY);
+    	randomNum = ThreadLocalRandom.current().nextDouble(0,1);
+
+    	double random = randomNum/10;
+    	double[] scale = new double[]{0.5+random,0.45+random,0.5+random};
+    	myZombie.setScale(scale);
+    	myZombies.add(myZombie);
+	}
+    
+    public void addPortal() {
+    	Portals myPortals = new Portals(this);
+    	
+    	PortalA = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
+    	double[] position = new double[]{0,altitude(0,PortalA)+9.1,PortalA};
+    	myPortals.PortalA.setPosition(position);
+    	
+    	PortalB = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
+    	position = new double[]{mySize.width-1,altitude(mySize.width-1,PortalB)+9.1,PortalB};
+    	myPortals.PortalB.setPosition(position);
+    	
     }
 
 	public void drawSelf(GL2 gl) {
 		
 		gl.glPushMatrix();
-		
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		//gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
 		//gl.glColor4d(0, 0, 0, 0);
@@ -260,14 +302,110 @@ public class Terrain extends GameObject {
 	    gl.glPopMatrix();
 	    gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 	    
-	    myAvatar.setPosition(10-Game.positionX, altitude(10-Game.positionX,10-Game.positionZ), 10-Game.positionZ);
-	    
+	    update(0);
 	}
 	
 	public void update(double dt) {
-        // do nothing
-		//myAvatar.setPosition(Game.positionX-10, 0, Game.positionZ-10);
+	    //should put in update but it's not working!!!
+		if(!forwardPortal){
+			if(myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1){
+				Game.positionX = 11-mySize.width;
+				Game.positionZ = 10-PortalB;
+			}else if(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1){
+				Game.positionX = 10;
+				Game.positionZ = 10-PortalA;
+			}
+			forwardPortal = !forwardPortal;
+		}
 		
+	    myAvatar.setPosition(10-Game.positionX, altitude(10-Game.positionX,10-Game.positionZ)+getMyAvatarY(), 10-Game.positionZ);
+	    if((myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1)||
+	    		(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
+	    	forwardPortal = !forwardPortal;
+	    
+	    double[] rotation ;
+	    if(Game.pressW||Game.pressS||Game.pressA||Game.pressD){
+	    	rotation = new double[]{0,-Game.angle2,0};
+	    	myAvatar.setRotation(rotation);
+	    	rotation = new double[]{2,Game.angle2,0};
+	    	myAvatar.getMyHead().setRotation(rotation);
+	    }
+	    	rotation = new double[]{2,-Game.angle2-myAvatar.getRotation()[1],0};
+	    	myAvatar.getMyHead().setRotation(rotation);
+
+	    if(Game.FPcamera){
+	    	myAvatar.show(false);
+	    }else{
+	    	myAvatar.show(true);
+	    }
+		
+	    if(Game.pressA&&Game.pressW){
+	    	rotation = new double[]{0,45,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressA&&Game.pressS){
+	    	rotation = new double[]{0,135,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressW&&Game.pressD){
+	    	rotation = new double[]{0,-45,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressS&&Game.pressD){
+	    	rotation = new double[]{0,-135,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressA){
+	    	rotation = new double[]{0,90,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressD){
+	    	rotation = new double[]{0,-90,0};
+	    	myAvatar.rotate(rotation);
+	    }else if(Game.pressS){
+	    	rotation = new double[]{0,-180,0};
+	    	myAvatar.rotate(rotation);
+	    }
+	    
+	    for (Zombie element : myZombies) {
+	    	rotation = element.getRotation();
+	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
+	    	element.translate(rotation);
+	    	rotation = element.getPosition();
+	    	element.setPosition(rotation[0], altitude(rotation[0],rotation[2])+myAvatarY, rotation[2]);
+	    	
+	    	double[] position = myAvatar.getPosition();
+	    	double ans = (((position[0]-rotation[0])
+	    			/Math.abs(position[0]-rotation[0]))+2)*90
+	    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
+	    			*(180/Math.PI)));
+	    	ans = ((ans + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
+
+	    	
+	    	if(((position[0]-rotation[0])*(position[0]-rotation[0]))+((rotation[2]-position[2])*(rotation[2]-position[2])) <= 30){
+	    		if((ans-element.getRotation()[1]<=180&&ans-element.getRotation()[1]>0)||ans-element.getRotation()[1]<-180){
+			    	rotation = new double[]{0,1,0};
+
+		    	}else if(ans-element.getRotation()[1]<0||ans-element.getRotation()[1]>180){
+			    	rotation = new double[]{0,-1,0};
+
+		    	}else{
+			    	rotation = new double[]{0,0,0};
+		    	}
+	    	}else{
+	    		position = new double[]{10,0,10};
+	    		ans = (((position[0]-rotation[0])
+		    			/Math.abs(position[0]-rotation[0]))+2)*90
+		    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
+		    			*(180/Math.PI)));
+		    	ans = ((ans + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
+	    		if((ans-element.getRotation()[1]<=180&&ans-element.getRotation()[1]>0)||ans-element.getRotation()[1]<-180){
+			    	rotation = new double[]{0,1,0};
+
+		    	}else if(ans-element.getRotation()[1]<0||ans-element.getRotation()[1]>180){
+			    	rotation = new double[]{0,-1,0};
+
+		    	}else{
+			    	rotation = new double[]{0,0,0};
+		    	}
+	    	}
+	    	element.rotate(rotation);
+	    }
     }
 	
 	public double[] NormalProcesser(int x, double y, int z) {
@@ -283,5 +421,11 @@ public class Terrain extends GameObject {
 		}
 		return normal;
         
+	}
+	public static double getMyAvatarY() {
+		return myAvatarY;
+	}
+	public void setMyAvatarY(double myAvatarY) {
+		this.myAvatarY = myAvatarY;
 	}
 }

@@ -4,8 +4,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.Map;
-
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import javax.swing.JFrame;
@@ -24,36 +22,40 @@ import ass2.Terrain;
  */
 public class Game extends JFrame implements GLEventListener , KeyListener{
 
-    private Terrain myTerrain;
-    private Sphere mySphere;
+	static Terrain myTerrain;
     
-	private double angle = 45;
-	private double angle2 = 0;
+    static double angle = 0;
+	static double angle2 = 0;
 	
 	static double positionX = 0;
 	static double positionZ = 0;
-	private double speed = 0.05;
+	static double speed = 0.05;
 	
 	private boolean up = false;
 	private boolean down = false;
 	private boolean left = false;
 	private boolean right = false;
 	
-	private boolean pressW = false;
-	private boolean pressS = false;
-	private boolean pressA = false;
-	private boolean pressD = false;
+	static boolean pressW = false;
+	static boolean pressS = false;
+	static boolean pressA = false;
+	static boolean pressD = false;
 	
-    private boolean FPcamera = false;
-
+	static boolean FPcamera = false;
+	static boolean cameramode = false;
+	
+	private float a = 0.3f; // Ambient white light intensity.
+	private float d = 0.8f; // Diffuse white light intensity
+	private float s = 0.3f; // Specular white light intensity.
+	private float g = 0.2f; // Global Ambient intensity.
+	
+	private double counter = 0; //counter
 
 	public Game(Terrain terrain) {
     	super("Assignment 2");
         myTerrain = terrain;
         //mySphere = new Sphere(GameObject.ROOT);
     }
-    
-    
     /**
      * Load a level file and display it.
      * 
@@ -61,82 +63,161 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
      * @throws FileNotFoundException
      */
     public static void main(String[] args) throws FileNotFoundException {
-        //Terrain terrain = LevelIO.load(new File(args[0]));
-        Terrain terrain = LevelIO.load(new File("test.txt"));
-        Game game = new Game(terrain);
-        
-        // initialisation
+    	// initialisation
         GLProfile glp = GLProfile.getDefault();
         GLCapabilities caps = new GLCapabilities(glp);
         
         // create a panel to draw on
         GLJPanel panel = new GLJPanel(caps);
         
-        // put it in a JFrame
-        final JFrame jframe = new JFrame("ass2");
-        jframe.setSize(1920, 1080);
-        jframe.add(panel);
-        jframe.setVisible(true);
-
-        // Catch window closing events and quit             
-        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //Terrain terrain = LevelIO.load(new File(args[0]));
+        Terrain terrain = LevelIO.load(new File("test.txt"));
+        Game game = new Game(terrain);
         
         panel.addGLEventListener(game);
         panel.addKeyListener(game);
-        panel.setFocusable(true);
+        panel.setFocusable(true);        
 
         // Add an animator to call 'display' at 60fps        
         FPSAnimator animator = new FPSAnimator(60);
         animator.add(panel);
-        animator.start();   
+        animator.start();  
+        
+        // put it in a JFrame
+        final JFrame jframe = new JFrame("ass2");
+        jframe.setSize(1920, 1080);
+        jframe.add(panel);
+        jframe.setVisible(true); 
+        // Catch window closing events and quit             
+        jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
-
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		GL2 gl = drawable.getGL().getGL2();
+		float factor = (float)((Math.sin(3.14*(counter/180))+1)/2.3);
+		gl.glClearColor((float) (factor*0.65),(float) (factor*0.9),(float) (factor*1), 0.0f);
+
+		gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glMatrixMode(GL2.GL_MODELVIEW);
-        gl.glClear(GL.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
         gl.glLoadIdentity();
         
-        if(FPcamera){
-        	gl.glRotated(angle-45,1,0,0);
-        	gl.glRotated(angle2,0,1,0);
-        	gl.glTranslated(0, -(Terrain.altitude(10-Game.positionX,10-Game.positionZ)+1.5), 0);
-        }else{
-        	gl.glTranslated(0, 0, -20);
-        	gl.glRotated(angle,1,0,0);
-        	gl.glRotated(angle2,0,1,0);
-        	//gl.glTranslated(0, -(Terrain.altitude(10-Game.positionX,10-Game.positionZ)), 0);
-        }
+        cameraSetting(drawable);
+        setGlobalLighting(drawable);
+        setTorchLighting(drawable);
+        
+        Key();
         
 		GameObject.ROOT.draw(gl);
+	}
+	public void setGlobalLighting(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glEnable(GL2.GL_LIGHT0);
 		
-		Key();
+		float factor = (float)((Math.sin(3.14*(counter/180))+1)/2.3);
+		a = (float) ((float) (factor*a)+0.1);
+		d = (float) ((float) (factor*d)+0.1);
+		s = (float) ((float) (factor*s)+0.1);
+		//System.out.println(factor);
+		float dusk;
+		if(counter>90&&counter<270){
+			dusk = (float) ((90-Math.abs(counter-180))*0.01 + a);
+		}else{
+			dusk = a;
+		}
 		
+		float lightAmb[] = { dusk, a, a, 1.0f };
+        float lightDif0[] = { d, d, d, 1.0f };
+        float lightSpec0[] = { s, s, s, 1.0f };
         
+        // Light0 properties.
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_AMBIENT, lightAmb,0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_DIFFUSE, lightDif0,0);
+        gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_SPECULAR, lightSpec0,0);        
+        
+        float lightPos0[] = {30.0f, 0.0f, 0.0f, 1.0f};
+        
+    	if(counter>360)counter=0;
+    	counter = counter+0.25;
+    	gl.glPushMatrix();{
+    		gl.glRotated(counter, 0.0, 0.0, 1.0);
+    		gl.glLightfv(GL2.GL_LIGHT0, GL2.GL_POSITION, lightPos0,0);
+    			//sun
+    			gl.glTranslatef(lightPos0[0], lightPos0[1], lightPos0[2]);
+    			float[] ambient = {1.0f, 1.0f, 1.0f, 1.0f};
+    			float[] diffuse = {1.0f, 1.0f, 1.0f, 1.0f};
+    			float[] specular = {0.0f, 0.0f, 0.0f, 1.0f};
+    			float[] emmL = {1.0f, 1.0f, 1.0f, 1.0f};
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emmL,0);
+    			GLUT glut = new GLUT();
+    			glut.glutSolidSphere(5, 20, 20);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, specular,0);
+		}gl.glPopMatrix();
 	}
-
+	public void setTorchLighting(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		if(counter > 180){
+			gl.glEnable(GL2.GL_LIGHT1);
+		}else{
+			gl.glDisable(GL2.GL_LIGHT1);
+		}
+				
+		float lightAmb[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        float lightDif0[] = {1.0f, 1.0f, 1.0f, 1.0f};
+        float lightSpec0[] = {0.0f, 0.0f, 0.0f, 1.0f};
+        
+        // LIGHT1 properties.
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_AMBIENT, lightAmb,0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_DIFFUSE, lightDif0,0);
+        gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPECULAR, lightSpec0,0);        
+        
+        float lightPos0[] = {0.0f, 0.0f, 0.0f, 1.0f};
+        float spotDirection[] = {0.0f, 0.0f, -1.0f};
+        float spotAngle = 45.0f;
+        
+    	gl.glPushMatrix();{
+    		gl.glTranslated(0, Terrain.myAvatar.getPosition()[1], 0);
+    		gl.glRotated(Terrain.myAvatar.getRotation()[1], 0.0, 1.0, 0.0);
+    		gl.glTranslated(0, 0, -0.1);
+    		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_POSITION, lightPos0,0);
+    		gl.glLightf(GL2.GL_LIGHT1, GL2.GL_SPOT_CUTOFF, spotAngle);
+    		gl.glLightfv(GL2.GL_LIGHT1, GL2.GL_SPOT_DIRECTION, spotDirection,0);
+    			//sun
+    			gl.glTranslatef(lightPos0[0], lightPos0[1], lightPos0[2]);
+    			float[] ambient = {1.0f, 1.0f, 1.0f, 1.0f};
+    			float[] diffuse = {1.0f, 1.0f, 1.0f, 1.0f};
+    			float[] specular = {0.0f, 0.0f, 0.0f, 1.0f};
+    			float[] emmL = {1.0f, 1.0f, 1.0f, 1.0f};
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emmL,0);
+    			GLUT glut = new GLUT();
+    			glut.glutSolidSphere(0.1, 20, 20);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, specular,0);
+		}gl.glPopMatrix();
+	}
 	@Override
-	public void dispose(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
-		
+	public void dispose(GLAutoDrawable drawable) {		
 	}
-
 	@Override
 	public void init(GLAutoDrawable drawable) {
-		// TODO Auto-generated method stub
 		GL2 gl = drawable.getGL().getGL2();
+		// gl.glClearColor(0.1f, 0.1f, 1.0f, 0.0f);
 		
-		//enable depth testing
+		// enable depth testing
     	gl.glEnable(GL2.GL_DEPTH_TEST);
-    	 
     	// enable lighting
         gl.glEnable(GL2.GL_LIGHTING);
-        // turn on a light. Use default settings.
-        gl.glEnable(GL2.GL_LIGHT0);
         // normalise normals (!)
         // this is necessary to make lighting work properly
         gl.glEnable(GL2.GL_NORMALIZE);
+        float globAmb[] = { g, g, g, 1.0f };
+        // Global light properties
+        gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globAmb,0); // Global ambient light.
+        gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE); // Enable local viewpoint.
         
         //Texture initialisation
         String groundTextureFileName1 = "src/ass2/grass.bmp";
@@ -144,25 +225,61 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         myTerrain.setGroundTexture(groundTexture);
         gl.glEnable(GL2.GL_TEXTURE_2D); 
         
+        //Objects initialisation
         myTerrain.addAvatar();
-    	
+        
+        myTerrain.addZombie();
+        myTerrain.addZombie();
+        myTerrain.addZombie();
+        
+        myTerrain.addPortal();
 	}
-
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width,
-			int height) {
+	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL2 gl = drawable.getGL().getGL2();
 		gl.glMatrixMode(GL2.GL_PROJECTION);
         gl.glLoadIdentity();
-        
-        gl.glFrustum(-0.1, 0.1, -0.05, 0.05, 0.1, 40);
+        if(FPcamera){
+            gl.glFrustum(-0.2, 0.2, -0.1, 0.1, 0.1, 60);
+        }else{
+            gl.glFrustum(-0.15, 0.15, -0.075, 0.075, 0.3, 60);
+        }
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
 	}
-
+	public void cameraSetting(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		if(FPcamera!=cameramode){
+        	cameramode(drawable);
+        	cameramode=FPcamera;
+        }
+        
+        if(FPcamera){
+        	gl.glRotated(angle,1,0,0);
+        	gl.glRotated(angle2,0,1,0);
+        	gl.glTranslated(0, -(Terrain.altitude(10-Game.positionX,10-Game.positionZ)+1), 0);
+        }else{
+        	gl.glTranslated(0, 0, -20);
+        	gl.glRotated(angle+45,1,0,0);
+        	gl.glRotated(angle2,0,1,0);
+        	//gl.glTranslated(0, -(Terrain.altitude(10-Game.positionX,10-Game.positionZ)), 0);
+        	gl.glTranslated(0, -2, 0);
+        }
+	}
+	public void cameramode(GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+        gl.glLoadIdentity();
+        if(FPcamera){
+            gl.glFrustum(-0.2, 0.2, -0.1, 0.1, 0.1, 60);
+        }else{
+            gl.glFrustum(-0.15, 0.15, -0.075, 0.075, 0.3, 60);
+        }
+        gl.glMatrixMode(GL2.GL_MODELVIEW);
+	}
 	@Override
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 	}
-
 	@Override
 	public void keyPressed(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -203,7 +320,6 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 			 break;
 		 }
 	}
-
 	@Override
 	public void keyReleased(KeyEvent e) {
 		switch (e.getKeyCode()) {
@@ -240,7 +356,6 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 			 break;
 		 }
 	}
-	
 	public void Key(){
 		if(up){
 			angle = (angle - 1) % 360;
@@ -281,7 +396,5 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 		}
 		
 		myTerrain.setPosition(Game.positionX-10, 0, Game.positionZ-10);
-		
-		//System.out.print(" !!!"+  speed*Math.cos(angle2/180*Math.PI) + " !!!\n");
-	}
+		}
 }

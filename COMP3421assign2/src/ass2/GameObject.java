@@ -179,10 +179,10 @@ public class GameObject {
      * 
      * @param factor
      */
-    public void scale(double factor) {
-        myScale[0] *= factor;
-        myScale[1] *= factor;
-        myScale[2] *= factor;
+    public void scale(double[] factor) {
+        myScale[0] *= factor[0];
+        myScale[1] *= factor[1];
+        myScale[2] *= factor[2];
     }
 
     /**
@@ -191,38 +191,37 @@ public class GameObject {
      * @return
      */
     public double[] getPosition() {
-        double[] t = new double[3];
-        t[0] = myTranslation[0];
-        t[1] = myTranslation[1];
-        t[2] = myTranslation[2];
-
-        return t;
+        return myTranslation;
     }
 
     /**
      * Set the local position of the object
      * 
-     * @param x
-     * @param y
-     * @param z
+     * @param position
+     */
+    public void setPosition(double[] position) {
+        myTranslation = position;
+    }
+    
+    /**
+     * Set the local position of the object
+     * 
+     * @param position
      */
     public void setPosition(double x, double y, double z) {
-        myTranslation[0] = x;
-        myTranslation[1] = y;
-        myTranslation[2] = z;
+    	double[] position = new double[]{x,y,z};
+    	setPosition(position);
     }
 
     /**
      * Move the object by the specified offset in local coordinates
      * 
-     * @param dx
-     * @param dy
-     * @param dz
+     * @param translation
      */  
-    public void translate(double dx, double dy, double dz) {
-        myTranslation[0] += dx;
-        myTranslation[1] += dy;
-        myTranslation[2] += dz;
+    public void translate(double[] translation) {
+        myTranslation[0] += translation[0];
+        myTranslation[1] += translation[1];
+        myTranslation[2] += translation[2];
     }
 
     /**
@@ -243,6 +242,8 @@ public class GameObject {
     public void show(boolean showing) {
         amShowing = showing;
     }
+    
+    
 
     /**
      * Update the object. This method is called once per frame. 
@@ -378,43 +379,5 @@ public class GameObject {
     		ct = ct.getParent();
     	}
         return s;
-    }
-
-    /**
-     * Change the parent of a game object.
-     * 
-     * add code so that the object does not change its global position, rotation or scale
-     * when it is reparented. You may need to add code before and/or after 
-     * the fragment of code that has been provided - depending on your approach
-     * 
-     * @param parent
-     */
-    public void setParent(GameObject parent) {
-//    	double[] globalPosition = getGlobalPosition();
-//    	double[] globalRotation = getGlobalRotation();
-//    	double[] globalScale = getGlobalScale();
-//    	//t = (T^-1);r = (R^-1);s = (S^-1)  then P(local) = (S^-1)(R^-1)(T^-1)Q(global)
-//    	//Reference: Inverse transformation
-//    	double[][] t = {{1,0,-(parent.getPosition())[0]},{0,1,-(parent.getPosition())[1]},{0,0,1}};
-//    	double[][] r = MathUtil.rotationMatrix(-(parent.getRotation()));
-//    	double[][] s = {{1.0/(parent.getScale()),0,0},{0,1.0/(parent.getScale()),0},{0,0,1}};
-//    	//m = (M^-1) = (S^-1)*(R^-1)*(T^-1) must in order!!   !bug fixed!
-//    	double[][] m = MathUtil.multiply(MathUtil.multiply(s, r), t);
-//    	double[][] totalinverse = m;
-//    	//move node
-//    	myParent.myChildren.remove(this);
-//        myParent = parent;
-//        myParent.myChildren.add(this);
-//        parent = parent.getParent();
-//		while(parent != ROOT){
-//			totalinverse = MathUtil.multiply(totalinverse, m);
-//        	parent = parent.getParent();
-//        }
-//		double[] v = {globalPosition[0],globalPosition[1],1};
-//		//P(local) = (M^-1)Q(global)
-//		myTranslation = MathUtil.multiply(totalinverse,v);
-//		//do dome calculate
-//        myRotation = MathUtil.normaliseAngle(globalRotation - (getGlobalRotation() - getRotation()));
-//    	myScale = globalScale/(getGlobalScale()/getScale());
     }
 }

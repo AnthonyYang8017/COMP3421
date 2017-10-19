@@ -2,9 +2,9 @@ package ass2;
 
 import com.jogamp.opengl.GL2;
 
-public class Avatar extends GameObject {
+public class Zombie extends GameObject {
 
-	static Cube myHead;
+	private Cube myHead;
 	private Cube myArmleft;
 	private Cube myArmright;
 	private Cube myTorso;
@@ -14,7 +14,7 @@ public class Avatar extends GameObject {
 	private double forward = 1;
 	
 	
-	public Avatar(GameObject parent) {
+	public Zombie(GameObject parent) {
 		super(parent);
 		setMyHead(new Cube(this));
 		double[] scale = new double[]{0.4,0.4,0.4};
@@ -36,7 +36,7 @@ public class Avatar extends GameObject {
 		//myArm
 		myArmleft = new Cube(this);
 		scale = new double[]{0.2,0.6,0.2};
-		rotation = new double[]{0,0,-10};
+		rotation = new double[]{90,0,0};
 		Position = new double[]{0.6,1,0};
 		myArmleft.setPosition(Position);
 		myArmleft.setScale(scale);
@@ -44,7 +44,7 @@ public class Avatar extends GameObject {
 		
 		myArmright = new Cube(this);
 		scale = new double[]{0.2,0.6,0.2};
-		rotation = new double[]{0,0,10};
+		rotation = new double[]{90,0,0};
 		Position = new double[]{-0.6,1,0};
 		myArmright.setPosition(Position);
 		myArmright.setScale(scale);
@@ -71,47 +71,34 @@ public class Avatar extends GameObject {
 	
 	public void drawSelf(GL2 gl) {
 		update(0);
-		
-	    gl.glTranslated(0, -0.68, 0);
-		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
-	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};
+		float[] ambient = {0f, 0.1f, 0.1f, 1.0f};
+	    float[] diffuse = {0f, 0.2f, 0.2f, 1.0f};
 	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+	    gl.glTranslated(0, -0.6, 0);
 	}
 	
-
-	
-	
-	// not working, have to put in draw-self function, not sure why
 	@Override
     public void update(double dt) {
-		double[] angle1 = new double[]{0,0,2};
-		double[] angle2 = new double[]{0,0,-2};
+		double[] angle1 = new double[]{0,0,0};
+		double[] angle2 = new double[]{0,0,0};
 		double[] angle3 = new double[]{0,0,0};
 		double[] angle4 = new double[]{0,0,0};
-		
 	   
-	    if(Game.pressW||Game.pressS||Game.pressA||Game.pressD){
-	    	double tem = myArmleft.getRotation()[0];
-	    	if(tem>30 || tem<-30){
-	    		forward = -forward;
-	    	}
-			angle1 = new double[]{1*forward*Game.speed*100,0,0};
-			angle2 = new double[]{-1*forward*Game.speed*100,0,0};
-			myArmleft.rotate(angle1);
-	    	myArmright.rotate(angle2);
-	    	angle3 = new double[]{1*forward*Game.speed*150,0,0};
-	    	angle4 = new double[]{-1*forward*Game.speed*150,0,0};
-	    	mylegright.rotate(angle3);
-	    	mylegleft.rotate(angle4);	    	
-		}else{
-		    myArmleft.setRotation(angle1);
-		    myArmright.setRotation(angle2);
-		    mylegright.setRotation(angle3);
-		    mylegleft.setRotation(angle3);
-		}
+    	double tem = myArmleft.getRotation()[0];
+    	if(tem>110 || tem<70){
+    		forward = -forward;
+    	}
+		angle1 = new double[]{1*forward*Game.speed*30,0,0};
+		angle2 = new double[]{-1*forward*Game.speed*30,0,0};
+		myArmleft.rotate(angle1);
+    	myArmright.rotate(angle2);
+    	angle3 = new double[]{1*forward*Game.speed*80,0,0};
+    	angle4 = new double[]{-1*forward*Game.speed*80,0,0};
+    	mylegright.rotate(angle3);
+    	mylegleft.rotate(angle4);
 	}
 
 	public Cube getMyHead() {
