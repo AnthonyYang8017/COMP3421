@@ -214,11 +214,11 @@ public class Road extends GameObject {
     
     public void drawSelf(GL2 gl) {
     	gl.glPushMatrix();
-		/*gl.glEnable(GL2.GL_TEXTURE_2D);
+		gl.glEnable(GL2.GL_TEXTURE_2D);
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
-		*/
+		
 		//gl.glColor4d(1, 0, 0, 0);
 		
 //		gl.glLineWidth((float) 0.2);
@@ -231,17 +231,19 @@ public class Road extends GameObject {
     		}
     	}
     	gl.glEnd();*/
-		
-    	
 		gl.glBegin(GL2.GL_QUADS);
         {
         	int altitudeIndex = 0;
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
-	        	System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
-	        	gl.glVertex3d(roadPoints.get(i), altitudes.get(altitudeIndex), roadPoints.get(i+1));
-	        	gl.glVertex3d(roadPoints.get(i+2), altitudes.get(altitudeIndex), roadPoints.get(i+3));
-	        	gl.glVertex3d(roadPoints.get(i+6),altitudes.get(altitudeIndex+1), roadPoints.get(i+7));
-	        	gl.glVertex3d(roadPoints.get(i+4), altitudes.get(altitudeIndex+1), roadPoints.get(i+5));
+	        	//System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
+	        	gl.glTexCoord2d(1, 1);
+	        	gl.glVertex3d(roadPoints.get(i), altitudes.get(altitudeIndex)+0.1, roadPoints.get(i+1));
+	        	gl.glTexCoord2d(1, 0);
+	        	gl.glVertex3d(roadPoints.get(i+2), altitudes.get(altitudeIndex)+0.1, roadPoints.get(i+3));
+	        	gl.glTexCoord2d(0, 0);
+	        	gl.glVertex3d(roadPoints.get(i+6),altitudes.get(altitudeIndex+1)+0.1, roadPoints.get(i+7));
+	        	gl.glTexCoord2d(0, 1);
+	        	gl.glVertex3d(roadPoints.get(i+4), altitudes.get(altitudeIndex+1)+0.1, roadPoints.get(i+5));
 	        	altitudeIndex++;
 	        	
 	        } 
