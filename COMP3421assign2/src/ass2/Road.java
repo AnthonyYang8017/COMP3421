@@ -15,7 +15,7 @@ public class Road extends GameObject {
     private List<Double> myPoints;
     private double myWidth;
     private List<Double> roadPoints;
-    
+    private List<Double> altitudes;
     private double startingAltitude;
     
     /** 
@@ -26,6 +26,7 @@ public class Road extends GameObject {
     	myWidth = width;
         myPoints = new ArrayList<Double>();
         roadPoints = new ArrayList<Double>();
+        altitudes = new ArrayList<Double>();
         myPoints.add(x0);
         myPoints.add(y0);
         
@@ -42,6 +43,7 @@ public class Road extends GameObject {
     	super(parent);
         myWidth = width;
         myPoints = new ArrayList<Double>();
+        altitudes = new ArrayList<Double>();
         roadPoints = new ArrayList<Double>();
         for (int i = 0; i < spine.length; i++) {
             myPoints.add(spine[i]);
@@ -83,7 +85,10 @@ public class Road extends GameObject {
     		roadPoints.add(p[1] - normal1[1] ); 
     		
     		roadPoints.add(p[0] + normal1[0] );
-    		roadPoints.add(p[1] + normal1[1] );  		
+    		roadPoints.add(p[1] + normal1[1] );
+    		
+    		//keep track of altitude
+    		altitudes.add(Terrain.altitude(p[0], p[1]));
     	}
     }
 
@@ -221,12 +226,14 @@ public class Road extends GameObject {
     	
 		gl.glBegin(GL2.GL_QUADS);
         {
+        	int altitudeIndex = 0;
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
 	        	System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
-	        	gl.glVertex3d(roadPoints.get(i), 2, roadPoints.get(i+1));
-	        	gl.glVertex3d(roadPoints.get(i+2), 2, roadPoints.get(i+3));
-	        	gl.glVertex3d(roadPoints.get(i+6),2, roadPoints.get(i+7));
-	        	gl.glVertex3d(roadPoints.get(i+4), 2, roadPoints.get(i+5));
+	        	gl.glVertex3d(roadPoints.get(i), altitudes.get(altitudeIndex), roadPoints.get(i+1));
+	        	gl.glVertex3d(roadPoints.get(i+2), altitudes.get(altitudeIndex), roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+6),altitudes.get(altitudeIndex+1), roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+4), altitudes.get(altitudeIndex+1), roadPoints.get(i+5));
+	        	altitudeIndex++;
 	        	
 	        } 
         }
