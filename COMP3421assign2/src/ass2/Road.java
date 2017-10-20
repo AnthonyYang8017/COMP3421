@@ -223,7 +223,7 @@ public class Road extends GameObject {
 		
 //		gl.glLineWidth((float) 0.2);
 		
-    	System.out.println("road");
+    	//System.out.println("road");
 		/*
     	gl.glBegin(GL2.GL_LINES);{
     		for(int i = 0; i<myPoints.size()-1;i+=2){

@@ -6,6 +6,13 @@ public class Portals extends GameObject {
 	public Cube PortalA;
 	public Cube PortalB;
 
+
+	//TODO Remove testing code
+	public String testInit(){
+		return "can use MyPortals";
+	}
+	
+	
 	public Portals(GameObject parent) {
 		super(parent);
 		PortalA = new Cube(this);
@@ -23,8 +30,13 @@ public class Portals extends GameObject {
 		PortalB.setPosition(Position);
 		PortalB.setScale(scale);
 		PortalB.setRotation(rotation);
+		
 	}
 
+	public void setTextures(MyTexture texA,MyTexture texB ){
+		PortalA.setTexture(texA);
+		PortalB.setTexture(texB);
+	}
 	public void drawSelf(GL2 gl) {
 		gl.glTranslated(0, -0.68, 0);
 		float[] ambient = {0.6f, 0.5f, 0.5f, 1.0f};

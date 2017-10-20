@@ -67,6 +67,17 @@ public class Zombie extends GameObject {
 		mylegright.setPosition(Position);
 		mylegright.setScale(scale);
 		mylegright.setRotation(rotation);
+
+	}
+	
+	public void setTextures(MyTexture headTex, MyTexture armTex, MyTexture legTex, MyTexture torsoTex){
+		//System.out.println("zom tex"+ headTex.getTextureId());
+		myHead.setTexture(headTex);
+ 		myArmleft.setTexture(armTex);
+ 		myArmright.setTexture(armTex);
+		myTorso.setTexture(torsoTex);
+		mylegleft.setTexture(legTex);
+		mylegright.setTexture(legTex);
 	}
 	
 	public void drawSelf(GL2 gl) {

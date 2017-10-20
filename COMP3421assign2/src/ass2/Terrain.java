@@ -35,6 +35,12 @@ public class Terrain extends GameObject {
 
     private MyTexture groundTexture;
     
+   //TODO get rid of testing code
+    public void checkPortal(){
+    	System.out.println("Portal check in terrain");
+    	System.out.println(myPortals.testInit());
+    }
+    
     /**
      * Create a new terrain
      *
@@ -221,8 +227,8 @@ public class Terrain extends GameObject {
 	}
     
     public void addPortal() {
-    	Portals myPortals = new Portals(this);
-    	
+    	myPortals = new Portals(this);
+    	System.out.println(myPortals.testInit());
     	PortalA = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
     	double[] position = new double[]{0,altitude(0,PortalA)+9.1,PortalA};
     	myPortals.PortalA.setPosition(position);
@@ -230,6 +236,7 @@ public class Terrain extends GameObject {
     	PortalB = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
     	position = new double[]{mySize.width-1,altitude(mySize.width-1,PortalB)+9.1,PortalB};
     	myPortals.PortalB.setPosition(position);
+    	System.out.println("Added portals "+ myPortals.testInit());
     	
     }
 
@@ -310,15 +317,15 @@ public class Terrain extends GameObject {
 		if(!forwardPortal){
 			if(myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1){
 				Game.positionX = 11-mySize.width;
-				Game.positionZ = 10-PortalB;
+				Game.positionZ = mySize.height-PortalB;
 			}else if(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1){
-				Game.positionX = 10;
-				Game.positionZ = 10-PortalA;
+				Game.positionX = mySize.width;
+				Game.positionZ = mySize.height-PortalA;
 			}
 			forwardPortal = !forwardPortal;
 		}
 		
-	    myAvatar.setPosition(10-Game.positionX, altitude(10-Game.positionX,10-Game.positionZ)+getMyAvatarY(), 10-Game.positionZ);
+	    myAvatar.setPosition(mySize.width-Game.positionX, altitude(mySize.width-Game.positionX,mySize.height-Game.positionZ)+getMyAvatarY(), mySize.height-Game.positionZ);
 	    if((myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1)||
 	    		(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
 	    	forwardPortal = !forwardPortal;
@@ -388,7 +395,7 @@ public class Terrain extends GameObject {
 			    	rotation = new double[]{0,0,0};
 		    	}
 	    	}else{
-	    		position = new double[]{10,0,10};
+	    		position = new double[]{mySize.width,0,mySize.height};
 	    		ans = (((position[0]-rotation[0])
 		    			/Math.abs(position[0]-rotation[0]))+2)*90
 		    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
@@ -429,8 +436,10 @@ public class Terrain extends GameObject {
 		this.myAvatarY = myAvatarY;
 	}
 	
-	//set textures for each object
-    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road){
+	//set textures for all Gameobjects
+    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture headTex,
+    		MyTexture armTex, MyTexture legTex, MyTexture torsoTex,  MyTexture ZheadTex,
+    		MyTexture ZarmTex, MyTexture ZlegTex, MyTexture ZtorsoTex, MyTexture ATex, MyTexture BTex ){
 		groundTexture = ground;
 		for(Tree t: myTrees){
 			t.setTexture(treeTop, treeTrunk);
@@ -438,7 +447,15 @@ public class Terrain extends GameObject {
 		for(Road r: myRoads){
 			r.setTexture(road);
 		}
+		for(Zombie z: myZombies){
+			z.setTextures(ZheadTex, ZarmTex, ZlegTex, ZtorsoTex);
+		}
+		
+    	myAvatar.setTextures(headTex, armTex, legTex, torsoTex);
+    	//System.out.println(myPortals.testInit()); //
+    	//System.out.println(ATex.getTextureId() + " " + BTex.getTextureId());
+		myPortals.setTextures(ATex, BTex);
+
     	
-    	
-}
+    }
 }

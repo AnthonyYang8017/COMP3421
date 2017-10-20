@@ -4,6 +4,8 @@ import com.jogamp.opengl.GL2;
 
 public class Cube extends GameObject {
 
+	private MyTexture texture;
+	
 	private static double vertices[] = 
 		{
 			1.0, -1.0, 1.0, 
@@ -42,10 +44,34 @@ public class Cube extends GameObject {
 		super(parent);
 	}
 	
+	
+	public void setTexture(MyTexture tex){
+		//System.out.println(tex.getTextureId());
+		texture = tex;
+	}
+	
+	//gets the texture S coord at corner i
+	public int texS(int i){
+		if (i == 1 || i == 2)
+			return 0;
+		else
+			return 1;
+	}
+	
+	//gets the texture T coord at corner i
+	public int texT(int i){
+		if (i == 1 || i == 3)
+			return 0;
+		else
+			return 1;
+	}
+	
+
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glTranslated(0, -0.7, 0);
-	    
+
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
 	    gl.glBegin(GL2.GL_QUADS);{
          	//Draw 6 faces of box (each with 4 vertices)
          	for(int i=0; i< 24; i++){
@@ -53,6 +79,7 @@ public class Cube extends GameObject {
          		//The same normal is used for all 4 vertices
          		//in a face
          		gl.glNormal3dv(faceNormals,(i/4)*3);
+         		gl.glTexCoord2d(texS(i%4), texT(i%4));
          		gl.glVertex3dv(vertices,index*3);
          	}
          }gl.glEnd();
