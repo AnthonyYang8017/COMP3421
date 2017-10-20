@@ -71,7 +71,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         GLJPanel panel = new GLJPanel(caps);
         
         //Terrain terrain = LevelIO.load(new File(args[0]));
-        Terrain terrain = LevelIO.load(new File("test5"));
+        Terrain terrain = LevelIO.load(new File("test.txt"));
         Game game = new Game(terrain);
         
         panel.addGLEventListener(game);
@@ -234,12 +234,12 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
       //Texture initialisation 
         String groundTextureFileName = "src/ass2/grass.bmp";
         MyTexture groundTexture = new MyTexture(gl,groundTextureFileName,"bmp",true);
-        String treeTopTextureFileName = "src/ass2/grass.bmp";
-        MyTexture treeTopTexture = new MyTexture(gl,treeTopTextureFileName,"bmp",true);
-        String treeTrunkTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture treeTrunkTexture = new MyTexture(gl,treeTrunkTextureFileName,"bmp",true);
-        String roadTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture roadTexture = new MyTexture(gl,roadTextureFileName,"bmp",true);
+        String treeTopTextureFileName = "src/ass2/leaves.jpg";
+        MyTexture treeTopTexture = new MyTexture(gl,treeTopTextureFileName,"jpg",true);
+        String treeTrunkTextureFileName = "src/ass2/bark.jpg";
+        MyTexture treeTrunkTexture = new MyTexture(gl,treeTrunkTextureFileName,"jpg",true);
+        String roadTextureFileName = "src/ass2/yellowRock.jpg";
+        MyTexture roadTexture = new MyTexture(gl,roadTextureFileName,"jpg",true);
         String headTextureFileName = "src/ass2/rock_norm.bmp";
         //Avatar textures
         MyTexture headTex = new MyTexture(gl,headTextureFileName,"bmp",true);
@@ -251,7 +251,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture torsoTex = new MyTexture(gl,torsoTextureFileName,"bmp",true);
         //Terrain.myAvatar.setTextures(headTex, armTex, legTex, torsoTex);
         //Zombie Textures
-        String ZheadTextureFileName = "src/ass2/rock_norm.bmp";
+        String ZheadTextureFileName = "src/ass2/zombieface.bmp";
         MyTexture ZheadTex = new MyTexture(gl,ZheadTextureFileName,"bmp",true);
         String ZarmTextureFileName = "src/ass2/rock_norm.bmp";
         MyTexture ZarmTex = new MyTexture(gl,ZarmTextureFileName,"bmp",true);

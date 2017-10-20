@@ -261,6 +261,7 @@ public class Terrain extends GameObject {
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT); 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, groundTexture.getTextureId());
 	 
+        System.out.println("textureSize" + mySize.width + " " +mySize.height);
 	    for (int z = 0; z < mySize.height -1; z++) {
 	        for (int x = 0; x < mySize.width -1; x++) {
 	        	double[] v;

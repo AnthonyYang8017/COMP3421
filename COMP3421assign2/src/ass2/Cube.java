@@ -52,7 +52,7 @@ public class Cube extends GameObject {
 	
 	//gets the texture S coord at corner i
 	public int texS(int i){
-		if (i == 1 || i == 2)
+		if (i == 0 || i == 1)
 			return 0;
 		else
 			return 1;
@@ -60,7 +60,7 @@ public class Cube extends GameObject {
 	
 	//gets the texture T coord at corner i
 	public int texT(int i){
-		if (i == 1 || i == 3)
+		if (i == 0 || i == 3)
 			return 0;
 		else
 			return 1;
@@ -70,7 +70,7 @@ public class Cube extends GameObject {
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
 		gl.glTranslated(0, -0.7, 0);
-
+		//System.out.println("cube" +this.getGlobalPosition()[0]+ " " + this.getGlobalPosition()[2]);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
 	    gl.glBegin(GL2.GL_QUADS);{
          	//Draw 6 faces of box (each with 4 vertices)
@@ -79,6 +79,7 @@ public class Cube extends GameObject {
          		//The same normal is used for all 4 vertices
          		//in a face
          		gl.glNormal3dv(faceNormals,(i/4)*3);
+         		System.out.println(texS(i%4)+ " " + texT(i%4));
          		gl.glTexCoord2d(texS(i%4), texT(i%4));
          		gl.glVertex3dv(vertices,index*3);
          	}
