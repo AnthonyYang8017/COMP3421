@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import javax.swing.JFrame;
@@ -228,10 +230,16 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         myTerrain.addZombie();
         
         myTerrain.addPortal();
-        System.out.println("Checking add Portal persistence");
-        myTerrain.checkPortal();
-        System.out.println("no null ptr exception");
-      //Texture initialisation 
+       
+        initialiseTextures(gl);
+        
+        gl.glEnable(GL2.GL_TEXTURE_2D); 
+	}
+	
+	public void initialiseTextures(GL2 gl ){
+	      //Texture initialisation 
+		//List<MyTexture> textures;
+		
         String groundTextureFileName = "src/ass2/grass.bmp";
         MyTexture groundTexture = new MyTexture(gl,groundTextureFileName,"bmp",true);
         String treeTopTextureFileName = "src/ass2/leaves.jpg";
@@ -240,25 +248,23 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture treeTrunkTexture = new MyTexture(gl,treeTrunkTextureFileName,"jpg",true);
         String roadTextureFileName = "src/ass2/yellowRock.jpg";
         MyTexture roadTexture = new MyTexture(gl,roadTextureFileName,"jpg",true);
-        String headTextureFileName = "src/ass2/rock_norm.bmp";
+        
         //Avatar textures
-        MyTexture headTex = new MyTexture(gl,headTextureFileName,"bmp",true);
-        String armTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture armTex = new MyTexture(gl,armTextureFileName,"bmp",true);
-        String legTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture legTex = new MyTexture(gl,legTextureFileName,"bmp",true);
-        String torsoTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture torsoTex = new MyTexture(gl,torsoTextureFileName,"bmp",true);
-        //Terrain.myAvatar.setTextures(headTex, armTex, legTex, torsoTex);
+        String headTexFileName = "src/ass2/hair.bmp";
+        MyTexture headTex = new MyTexture(gl, headTexFileName,"bmp",true);
+        String faceTexFileName = "src/ass2/avatarFace.bmp";
+        MyTexture faceTex = new MyTexture(gl,faceTexFileName,"bmp",true);
+        String bodyTexFileName = "src/ass2/avatarBody.bmp";
+        MyTexture bodyTex = new MyTexture(gl,bodyTexFileName,"bmp",true);
+        
+        
         //Zombie Textures
-        String ZheadTextureFileName = "src/ass2/zombieface.bmp";
-        MyTexture ZheadTex = new MyTexture(gl,ZheadTextureFileName,"bmp",true);
-        String ZarmTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture ZarmTex = new MyTexture(gl,ZarmTextureFileName,"bmp",true);
-        String ZlegTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture ZlegTex = new MyTexture(gl,ZlegTextureFileName,"bmp",true);
-        String ZtorsoTextureFileName = "src/ass2/rock_norm.bmp";
-        MyTexture ZtorsoTex = new MyTexture(gl,torsoTextureFileName,"bmp",true);
+        String ZheadTexFileName = "src/ass2/zombieBody.bmp";
+        MyTexture ZheadTex = new MyTexture(gl,ZheadTexFileName,"bmp",true);
+        String ZFaceTexFileName = "src/ass2/zombieFace.bmp";
+        MyTexture ZFaceTex = new MyTexture(gl,ZFaceTexFileName,"bmp",true);
+        String ZBodyTexFileName = "src/ass2/zombieBody.bmp";
+        MyTexture ZBodyTex = new MyTexture(gl,ZBodyTexFileName,"bmp",true);
        // System.out.println(ZtorsoTex.getTextureId());
         
         //Portal Textures
@@ -266,11 +272,10 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture ATex = new MyTexture(gl,ATextureFileName,"bmp",true);
         String BTextureFileName = "src/ass2/rock_norm.bmp";
         MyTexture BTex = new MyTexture(gl,BTextureFileName,"bmp",true);
-        System.out.println("Atex"+ATex.getTextureId());
         
-        myTerrain.setTextures(groundTexture, treeTopTexture, treeTrunkTexture, roadTexture,headTex, armTex, legTex, ZtorsoTex, ZheadTex, ZarmTex, ZlegTex, ZtorsoTex, ATex, BTex );
+        myTerrain.setTextures(groundTexture, treeTopTexture, treeTrunkTexture, roadTexture,faceTex, 
+        		headTex, bodyTex, ZFaceTex, ZheadTex,ZBodyTex, ATex, BTex );
         
-        gl.glEnable(GL2.GL_TEXTURE_2D); 
 	}
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {

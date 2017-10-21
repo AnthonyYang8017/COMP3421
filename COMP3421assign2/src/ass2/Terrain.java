@@ -438,9 +438,8 @@ public class Terrain extends GameObject {
 	}
 	
 	//set textures for all Gameobjects
-    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture headTex,
-    		MyTexture armTex, MyTexture legTex, MyTexture torsoTex,  MyTexture ZheadTex,
-    		MyTexture ZarmTex, MyTexture ZlegTex, MyTexture ZtorsoTex, MyTexture ATex, MyTexture BTex ){
+    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture avFace,  MyTexture headTex,
+    		MyTexture bodyTex,MyTexture zFace,MyTexture ZheadTex, MyTexture ZBodyTex, MyTexture ATex, MyTexture BTex ){
 		groundTexture = ground;
 		for(Tree t: myTrees){
 			t.setTexture(treeTop, treeTrunk);
@@ -449,10 +448,10 @@ public class Terrain extends GameObject {
 			r.setTexture(road);
 		}
 		for(Zombie z: myZombies){
-			z.setTextures(ZheadTex, ZarmTex, ZlegTex, ZtorsoTex);
+			z.setTextures(zFace,ZheadTex, ZBodyTex);
 		}
 		
-    	myAvatar.setTextures(headTex, armTex, legTex, torsoTex);
+    	myAvatar.setTextures(avFace, headTex,  bodyTex);
     	//System.out.println(myPortals.testInit()); //
     	//System.out.println(ATex.getTextureId() + " " + BTex.getTextureId());
 		myPortals.setTextures(ATex, BTex);

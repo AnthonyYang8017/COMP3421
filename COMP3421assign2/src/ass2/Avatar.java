@@ -71,13 +71,14 @@ public class Avatar extends GameObject {
 		
 	}
 	
-	public void setTextures(MyTexture headTex, MyTexture armTex, MyTexture legTex, MyTexture torsoTex){
-		myHead.setTexture(headTex);
- 		myArmleft.setTexture(armTex);
- 		myArmright.setTexture(armTex);
-		myTorso.setTexture(torsoTex);
-		mylegleft.setTexture(legTex);
-		mylegright.setTexture(legTex);
+	//set textures on the cubes
+	public void setTextures(MyTexture faceTex, MyTexture headTex, MyTexture bodyTex){
+		myHead.setTextures(faceTex, headTex);
+ 		myArmleft.setTextures(bodyTex,bodyTex);
+ 		myArmright.setTextures(bodyTex, bodyTex);
+		myTorso.setTextures(bodyTex, bodyTex);
+		mylegleft.setTextures(bodyTex, bodyTex);
+		mylegright.setTextures(bodyTex, bodyTex);
 	}
 	
 	public void drawSelf(GL2 gl) {

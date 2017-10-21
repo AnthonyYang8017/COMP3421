@@ -34,8 +34,8 @@ public class Portals extends GameObject {
 	}
 
 	public void setTextures(MyTexture texA,MyTexture texB ){
-		PortalA.setTexture(texA);
-		PortalB.setTexture(texB);
+		PortalA.setTextures(texA, texA);
+		PortalB.setTextures(texB, texB);
 	}
 	public void drawSelf(GL2 gl) {
 		gl.glTranslated(0, -0.68, 0);
