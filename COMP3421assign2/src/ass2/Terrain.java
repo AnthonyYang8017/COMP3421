@@ -24,7 +24,8 @@ public class Terrain extends GameObject {
     private List<Tree> myTrees;
     private List<Road> myRoads;
     static Avatar myAvatar;
-    private List<Zombie> myZombies;
+    //private List<Zombie> myZombies;
+    private Other myOther;
     private Portals myPortals;
     private Integer PortalA;
     private Integer PortalB;
@@ -32,7 +33,7 @@ public class Terrain extends GameObject {
     private float[] mySunlight;
     private boolean forwardPortal = true;
     
-
+    
     private MyTexture groundTexture;
     
     /**
@@ -50,7 +51,7 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
-        myZombies = new ArrayList<Zombie>();
+      //  myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
         
     }
@@ -205,7 +206,8 @@ public class Terrain extends GameObject {
     	myAvatar.setScale(scale);
 	}
     
-    public void addZombie() {
+    /*
+    public void addZombie(GL2 gl) {
     	Zombie myZombie = new Zombie(this);
     	double randomNum = ThreadLocalRandom.current().nextDouble(0,1);
     	double randomNumX = (randomNum * (mySize.width-1));
@@ -217,8 +219,17 @@ public class Terrain extends GameObject {
     	double random = randomNum/10;
     	double[] scale = new double[]{0.5+random,0.45+random,0.5+random};
     	myZombie.setScale(scale);
+    	
+    	//initialise VBO stuff
+    	
     	myZombies.add(myZombie);
-	}
+	}*/
+    
+    public void addOther(GL2 gl){
+    	myOther = new Other(this);
+    	myOther.initVBO(gl);
+    	
+    }
     
     public void addPortal() {
     	myPortals = new Portals(this);
@@ -363,8 +374,9 @@ public class Terrain extends GameObject {
 	    	rotation = new double[]{0,-180,0};
 	    	myAvatar.rotate(rotation);
 	    }
-	    
-	    for (Zombie element : myZombies) {
+	   
+	}
+	    /*for (Zombie element : myZombies) {
 	    	rotation = element.getRotation();
 	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
 	    	element.translate(rotation);
@@ -408,7 +420,7 @@ public class Terrain extends GameObject {
 	    	}
 	    	element.rotate(rotation);
 	    }
-    }
+    }*/
 	
 	public double[] NormalProcesser(int x, double y, int z) {
 		double[] normal;
@@ -433,7 +445,7 @@ public class Terrain extends GameObject {
 	
 	//set textures for all Gameobjects
     public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture avFace,  MyTexture headTex,
-    		MyTexture bodyTex,MyTexture zFace,MyTexture ZheadTex, MyTexture ZBodyTex, MyTexture ATex, MyTexture BTex ){
+    		MyTexture bodyTex, MyTexture ATex, MyTexture BTex ){
 		groundTexture = ground;
 		for(Tree t: myTrees){
 			t.setTexture(treeTop, treeTrunk);
@@ -441,9 +453,10 @@ public class Terrain extends GameObject {
 		for(Road r: myRoads){
 			r.setTexture(road);
 		}
+		/*
 		for(Zombie z: myZombies){
 			z.setTextures(zFace,ZheadTex, ZBodyTex);
-		}
+		}*/
 		
     	myAvatar.setTextures(avFace, headTex,  bodyTex);
     	//System.out.println(myPortals.testInit()); //

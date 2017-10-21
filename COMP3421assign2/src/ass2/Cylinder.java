@@ -102,9 +102,6 @@ public class Cylinder extends GameObject {
                 
                 double s1 = (1/(double)slices)*i;
                 double s2 = (1/(double)slices)*(1+i);
-                System.out.println("s1: "+s1);
-                System.out.println("s2: "+s2);
-                
                 //Calculation for face normal for each quad
                 //                     (x0,y0,z2)
                 //                     ^

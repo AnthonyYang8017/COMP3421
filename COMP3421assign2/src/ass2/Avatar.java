@@ -84,7 +84,7 @@ public class Avatar extends GameObject {
 	public void drawSelf(GL2 gl) {
 		update(0);
 		
-		System.out.println(this.getGlobalPosition()[0]+ " " + this.getGlobalPosition()[2]);
+		System.out.println("position"+this.getGlobalPosition()[0]+ " " + this.getGlobalPosition()[2]);
 	    gl.glTranslated(0, -0.68, 0);
 		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
 	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};

@@ -225,9 +225,12 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         //Objects initialisation
         myTerrain.addAvatar();
         
-        myTerrain.addZombie();
-        myTerrain.addZombie();
-        myTerrain.addZombie();
+        //Initalise Zombie VBOs
+        
+       // myTerrain.addZombie(gl);
+        //myTerrain.addZombie(gl);
+        //myTerrain.addZombie(gl);
+        myTerrain.addOther(gl);
         
         myTerrain.addPortal();
        
@@ -256,7 +259,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture faceTex = new MyTexture(gl,faceTexFileName,"bmp",true);
         String bodyTexFileName = "src/ass2/avatarBody.bmp";
         MyTexture bodyTex = new MyTexture(gl,bodyTexFileName,"bmp",true);
-        
+        /*
         
         //Zombie Textures
         String ZheadTexFileName = "src/ass2/zombieBody.bmp";
@@ -266,6 +269,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         String ZBodyTexFileName = "src/ass2/zombieBody.bmp";
         MyTexture ZBodyTex = new MyTexture(gl,ZBodyTexFileName,"bmp",true);
        // System.out.println(ZtorsoTex.getTextureId());
+        */
         
         //Portal Textures
         String ATextureFileName = "src/ass2/rock_norm.bmp";
@@ -274,7 +278,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture BTex = new MyTexture(gl,BTextureFileName,"bmp",true);
         
         myTerrain.setTextures(groundTexture, treeTopTexture, treeTrunkTexture, roadTexture,faceTex, 
-        		headTex, bodyTex, ZFaceTex, ZheadTex,ZBodyTex, ATex, BTex );
+        		headTex, bodyTex, ATex, BTex );
         
 	}
 	@Override

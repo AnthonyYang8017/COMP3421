@@ -82,7 +82,7 @@ public class Cube extends GameObject {
          		//The same normal is used for all 4 vertices
          		//in a face
          		gl.glNormal3dv(faceNormals,(i/4)*3);
-         		System.out.println(texS(i%4)+ " " + texT(i%4));
+         		//System.out.println(texS(i%4)+ " " + texT(i%4));
          		gl.glTexCoord2d(texS(i%4), texT(i%4));
          		gl.glVertex3dv(vertices,index*3);
          	}
@@ -97,7 +97,7 @@ public class Cube extends GameObject {
          		//The same normal is used for all 4 vertices
          		//in a face
          		gl.glNormal3dv(faceNormals,(i/4)*3);
-         		System.out.println(texS(i%4)+ " " + texT(i%4));
+         		//System.out.println(texS(i%4)+ " " + texT(i%4));
          		gl.glTexCoord2d(texS(i%4), texT(i%4));
          		gl.glVertex3dv(vertices,index*3);
          	}
