@@ -35,12 +35,6 @@ public class Terrain extends GameObject {
 
     private MyTexture groundTexture;
     
-   //TODO get rid of testing code
-    public void checkPortal(){
-    	System.out.println("Portal check in terrain");
-    	System.out.println(myPortals.testInit());
-    }
-    
     /**
      * Create a new terrain
      *
@@ -220,7 +214,7 @@ public class Terrain extends GameObject {
     	myZombie.setPosition(randomNumX,altitude(randomNumX,randomNumY)+getMyAvatarY(),randomNumY);
     	randomNum = ThreadLocalRandom.current().nextDouble(0,1);
 
-    	double random = randomNum/10;
+    	double random = randomNum/mySize.width;
     	double[] scale = new double[]{0.5+random,0.45+random,0.5+random};
     	myZombie.setScale(scale);
     	myZombies.add(myZombie);
