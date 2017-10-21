@@ -25,7 +25,9 @@ public class Terrain extends GameObject {
     private List<Road> myRoads;
     static Avatar myAvatar;
     //private List<Zombie> myZombies;
-    private Other myOther;
+    private OtherVBO myVBO;
+    private List<Other> myOthers;
+    
     private Portals myPortals;
     private Integer PortalA;
     private Integer PortalB;
@@ -51,6 +53,7 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
+        myOthers = new ArrayList<Other>();
       //  myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
         
@@ -206,6 +209,7 @@ public class Terrain extends GameObject {
     	myAvatar.setScale(scale);
 	}
     
+    
     /*
     public void addZombie(GL2 gl) {
     	Zombie myZombie = new Zombie(this);
@@ -225,11 +229,13 @@ public class Terrain extends GameObject {
     	myZombies.add(myZombie);
 	}*/
     
-    public void addOther(GL2 gl){
-    	myOther = new Other(this);
-    	myOther.initVBO(gl);
-    	
+    public void addOther(double x, double z) {
+        double y = altitude(x, z);
+        Other other = new Other(this);
+        other.setPosition(x, y, z);
+        myOthers.add(other);
     }
+    
     
     public void addPortal() {
     	myPortals = new Portals(this);
@@ -459,10 +465,14 @@ public class Terrain extends GameObject {
 		}*/
 		
     	myAvatar.setTextures(avFace, headTex,  bodyTex);
-    	//System.out.println(myPortals.testInit()); //
-    	//System.out.println(ATex.getTextureId() + " " + BTex.getTextureId());
-		myPortals.setTextures(ATex, BTex);
-
-    	
+		myPortals.setTextures(ATex, BTex);   	
     }
+    
+   public void  othersVBOInit(GL2 gl){
+	   myVBO = new OtherVBO(gl);
+	   for (Other o: myOthers){
+		   System.out.println("TEST");
+		   o.initVBO(myVBO);
+	   }
+   }
 }

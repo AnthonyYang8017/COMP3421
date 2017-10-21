@@ -224,13 +224,14 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         
         //Objects initialisation
         myTerrain.addAvatar();
-        
+       
         //Initalise Zombie VBOs
+        myTerrain.othersVBOInit(gl);
         
        // myTerrain.addZombie(gl);
         //myTerrain.addZombie(gl);
         //myTerrain.addZombie(gl);
-        myTerrain.addOther(gl);
+        
         
         myTerrain.addPortal();
        
