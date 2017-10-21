@@ -14,28 +14,41 @@ public class Other extends GameObject {
 		// TODO Auto-generated constructor stub
 	}
 
-	private float positions[] =  {
-			0,1,-1, 
-			-1,-1,-1,
-			1,-1,-1, 
-			0, 2,-4,
-			-2,-2,-4, 
-			2,-2,-4
-    };
-
+	private float positions[] =  		
+	{
+			1, -1, 1, 
+			1, 1, 1, 
+			1, 1, -1, 
+			1, -1, -1, 
+			-1, -1, 1, 
+			-1, 1, 1, 
+			-1, 1, -1, 
+			-1, -1, -1
+		};
 	//There should be a matching entry in this array for each entry in
 	//the positions array
-	private float colors[] =     {
+	private float colors[] = 
+	{
 			1,0,0, 
 			0,1,0,
 			1,1,1,
 			0,0,0,
 			0,0,1, 
-			1,1,0}; 
+			1,1,0,
+			1,0,0, 
+			0,1,0,
+	}; 
 
 	//Best to use smallest data type possible for indexes 
 	//We could even use byte here...
-	private short indexes[] = {0,1,5,3,4,2};
+	private short indexes[] = {
+		    3, 2, 1, 0, //right face
+		    7, 6, 2, 3, //back face
+		    4, 5, 6, 7, //left face
+			0, 1, 5, 4, //front face
+			4, 7, 3, 0, //bottom face
+			6, 5, 1, 2  //top face
+		};
 
 	//These are not vertex buffer objects, they are just java containers
 	private FloatBuffer  posData= Buffers.newDirectFloatBuffer(positions);
@@ -115,7 +128,7 @@ public class Other extends GameObject {
    	   	gl.glVertexAttribPointer(vertexColLoc,3, GL.GL_FLOAT, false,0, positions.length*Float.BYTES);
            	
    	    gl.glBindBuffer(GL2.GL_ELEMENT_ARRAY_BUFFER, bufferIds[1]);  	
-    	gl.glDrawElements(GL2.GL_TRIANGLES, 6, GL2.GL_UNSIGNED_SHORT,0);        	   	
+    	gl.glDrawElements(GL2.GL_QUADS, 24, GL2.GL_UNSIGNED_SHORT,0);        	   	
     	gl.glUseProgram(0);
     	   
      	//Un-bind the buffer. 
