@@ -92,7 +92,7 @@ public class LevelIO {
                 JSONObject jsonTree = jsonOthers.getJSONObject(i);
                 double x = jsonTree.getDouble("x");
                 double z = jsonTree.getDouble("z");
-                terrain.addOther(x, z);
+                terrain.addZombie(x, z);
             }
         }
         

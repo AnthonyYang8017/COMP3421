@@ -2,11 +2,11 @@ package ass2;
 
 import com.jogamp.opengl.GL2;
 
-public class Other extends GameObject {
+public class VBOCube extends GameObject {
 	
-	private OtherVBO vbo; //the actual VOB, and method for drawing
+	private OtherVBO vbo; //the actual VBO, and method for drawing
 
-	public Other(GameObject parent) {
+	public VBOCube(GameObject parent) {
 		super(parent);
 	}
 	

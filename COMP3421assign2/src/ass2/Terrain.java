@@ -24,9 +24,9 @@ public class Terrain extends GameObject {
     private List<Tree> myTrees;
     private List<Road> myRoads;
     static Avatar myAvatar;
-    //private List<Zombie> myZombies;
+    private List<Zombie> myZombies;
     private OtherVBO myVBO;
-    private List<Other> myOthers;
+   // private List<VBOCube> myOthers;
     
     private Portals myPortals;
     private Integer PortalA;
@@ -53,8 +53,8 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
-        myOthers = new ArrayList<Other>();
-      //  myZombies = new ArrayList<Zombie>();
+      //  myOthers = new ArrayList<VBOCube>();
+        myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
         
     }
@@ -229,11 +229,11 @@ public class Terrain extends GameObject {
     	myZombies.add(myZombie);
 	}*/
     
-    public void addOther(double x, double z) {
+    public void addZombie(double x, double z) {
         double y = altitude(x, z);
-        Other other = new Other(this);
-        other.setPosition(x, y, z);
-        myOthers.add(other);
+        Zombie zombie = new Zombie(this);
+        zombie.setPosition(x, y, z);
+        myZombies.add(zombie);
     }
     
     
@@ -470,9 +470,9 @@ public class Terrain extends GameObject {
     
    public void  othersVBOInit(GL2 gl){
 	   myVBO = new OtherVBO(gl);
-	   for (Other o: myOthers){
+	   for (Zombie z: myZombies){
 		   System.out.println("TEST");
-		   o.initVBO(myVBO);
+		   z.initVBO(myVBO);
 	   }
    }
 }
