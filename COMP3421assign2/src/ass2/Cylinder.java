@@ -7,6 +7,7 @@ public class Cylinder extends GameObject {
 	private double radius = 0.2;
 	private double height = 2;
 	private int slices = 16;
+	private MyTexture texture; 
 	
 	public Cylinder(GameObject parent) {
 		super(parent);
@@ -28,8 +29,16 @@ public class Cylinder extends GameObject {
 		this.radius = radius;
 	}
 	
+	public void setTexture(MyTexture trunk){
+		texture = trunk;
+	}
+	
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
+		gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
+	    gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
+		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
+		
 		float[] ambient = {0.4f, 0.4f, 0.2f, 1.0f};
 	    float[] diffuse = {0.4f, 0.4f, 0.2f, 1.0f};
 	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
@@ -90,6 +99,9 @@ public class Cylinder extends GameObject {
 
                 double x1 = radius*Math.cos(a1);
                 double y1 = radius*Math.sin(a1);
+                
+                double s1 = (1/(double)slices)*i;
+                double s2 = (1/(double)slices)*(1+i);
                 //Calculation for face normal for each quad
                 //                     (x0,y0,z2)
                 //                     ^
@@ -111,15 +123,17 @@ public class Cylinder extends GameObject {
                 //If we want it to be smooth like a cylinder
                 //use different normals for each different x and y
                 gl.glNormal3d(x0, y0, 0);
-                                             
+                gl.glTexCoord2d(s1,1);                     
                 gl.glVertex3d(x0, y0, z1);
+                gl.glTexCoord2d(s1,0);
                 gl.glVertex3d(x0, y0, z2);  
                 
                 //If we want it to be smooth like a cylinder
                 //use different normals for each different x and y
                 gl.glNormal3d(x1, y1, 0);
-                
+                gl.glTexCoord2d(s2,0);
                 gl.glVertex3d(x1, y1, z2);
+                gl.glTexCoord2d(s2,1);
                 gl.glVertex3d(x1, y1, z1);               
                          
             }

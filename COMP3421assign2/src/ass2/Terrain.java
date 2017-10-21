@@ -25,6 +25,9 @@ public class Terrain extends GameObject {
     private List<Road> myRoads;
     static Avatar myAvatar;
     private List<Zombie> myZombies;
+    private OtherVBO myVBO;
+   // private List<VBOCube> myOthers;
+    
     private Portals myPortals;
     private Integer PortalA;
     private Integer PortalB;
@@ -32,7 +35,7 @@ public class Terrain extends GameObject {
     private float[] mySunlight;
     private boolean forwardPortal = true;
     
-
+    
     private MyTexture groundTexture;
     
     /**
@@ -50,6 +53,7 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
+      //  myOthers = new ArrayList<VBOCube>();
         myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
         
@@ -194,7 +198,7 @@ public class Terrain extends GameObject {
      * @param z
      */
     public void addRoad(double width, double[] spine) {
-        Road road = new Road(width, spine);
+    	Road road = new Road(this, width, spine, altitude(spine[0], spine[1]));
         myRoads.add(road);        
     }
     
@@ -205,7 +209,9 @@ public class Terrain extends GameObject {
     	myAvatar.setScale(scale);
 	}
     
-    public void addZombie() {
+    
+    /*
+    public void addZombie(GL2 gl) {
     	Zombie myZombie = new Zombie(this);
     	double randomNum = ThreadLocalRandom.current().nextDouble(0,1);
     	double randomNumX = (randomNum * (mySize.width-1));
@@ -217,12 +223,23 @@ public class Terrain extends GameObject {
     	double random = randomNum/10;
     	double[] scale = new double[]{0.5+random,0.45+random,0.5+random};
     	myZombie.setScale(scale);
+    	
+    	//initialise VBO stuff
+    	
     	myZombies.add(myZombie);
-	}
+	}*/
+    
+    public void addZombie(double x, double z) {
+        double y = altitude(x, z);
+        Zombie zombie = new Zombie(this);
+        zombie.setPosition(x, y, z);
+        myZombies.add(zombie);
+    }
+    
     
     public void addPortal() {
-    	Portals myPortals = new Portals(this);
-    	
+    	myPortals = new Portals(this);
+    	System.out.println(myPortals.testInit());
     	PortalA = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
     	double[] position = new double[]{0,altitude(0,PortalA)+9.1,PortalA};
     	myPortals.PortalA.setPosition(position);
@@ -230,6 +247,7 @@ public class Terrain extends GameObject {
     	PortalB = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
     	position = new double[]{mySize.width-1,altitude(mySize.width-1,PortalB)+9.1,PortalB};
     	myPortals.PortalB.setPosition(position);
+    	System.out.println("Added portals "+ myPortals.testInit());
     	
     }
 
@@ -254,6 +272,7 @@ public class Terrain extends GameObject {
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT); 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, groundTexture.getTextureId());
 	 
+        System.out.println("textureSize" + mySize.width + " " +mySize.height);
 	    for (int z = 0; z < mySize.height -1; z++) {
 	        for (int x = 0; x < mySize.width -1; x++) {
 	        	double[] v;
@@ -310,15 +329,15 @@ public class Terrain extends GameObject {
 		if(!forwardPortal){
 			if(myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1){
 				Game.positionX = 11-mySize.width;
-				Game.positionZ = 10-PortalB;
+				Game.positionZ = mySize.height-PortalB;
 			}else if(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1){
-				Game.positionX = 10;
-				Game.positionZ = 10-PortalA;
+				Game.positionX = mySize.width;
+				Game.positionZ = mySize.height-PortalA;
 			}
 			forwardPortal = !forwardPortal;
 		}
 		
-	    myAvatar.setPosition(10-Game.positionX, altitude(10-Game.positionX,10-Game.positionZ)+getMyAvatarY(), 10-Game.positionZ);
+	    myAvatar.setPosition(mySize.width-Game.positionX, altitude(mySize.width-Game.positionX,mySize.height-Game.positionZ)+getMyAvatarY(), mySize.height-Game.positionZ);
 	    if((myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1)||
 	    		(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
 	    	forwardPortal = !forwardPortal;
@@ -361,8 +380,9 @@ public class Terrain extends GameObject {
 	    	rotation = new double[]{0,-180,0};
 	    	myAvatar.rotate(rotation);
 	    }
-	    
-	    for (Zombie element : myZombies) {
+	   
+	}
+	    /*for (Zombie element : myZombies) {
 	    	rotation = element.getRotation();
 	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
 	    	element.translate(rotation);
@@ -388,7 +408,7 @@ public class Terrain extends GameObject {
 			    	rotation = new double[]{0,0,0};
 		    	}
 	    	}else{
-	    		position = new double[]{10,0,10};
+	    		position = new double[]{mySize.width,0,mySize.height};
 	    		ans = (((position[0]-rotation[0])
 		    			/Math.abs(position[0]-rotation[0]))+2)*90
 		    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
@@ -406,7 +426,7 @@ public class Terrain extends GameObject {
 	    	}
 	    	element.rotate(rotation);
 	    }
-    }
+    }*/
 	
 	public double[] NormalProcesser(int x, double y, int z) {
 		double[] normal;
@@ -428,4 +448,31 @@ public class Terrain extends GameObject {
 	public void setMyAvatarY(double myAvatarY) {
 		this.myAvatarY = myAvatarY;
 	}
+	
+	//set textures for all Gameobjects
+    public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture avFace,  MyTexture headTex,
+    		MyTexture bodyTex, MyTexture ATex, MyTexture BTex ){
+		groundTexture = ground;
+		for(Tree t: myTrees){
+			t.setTexture(treeTop, treeTrunk);
+		}
+		for(Road r: myRoads){
+			r.setTexture(road);
+		}
+		/*
+		for(Zombie z: myZombies){
+			z.setTextures(zFace,ZheadTex, ZBodyTex);
+		}*/
+		
+    	myAvatar.setTextures(avFace, headTex,  bodyTex);
+		myPortals.setTextures(ATex, BTex);   	
+    }
+    
+   public void  othersVBOInit(GL2 gl){
+	   myVBO = new OtherVBO(gl);
+	   for (Zombie z: myZombies){
+		   System.out.println("TEST");
+		   z.initVBO(myVBO);
+	   }
+   }
 }

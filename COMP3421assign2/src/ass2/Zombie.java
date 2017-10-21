@@ -4,19 +4,19 @@ import com.jogamp.opengl.GL2;
 
 public class Zombie extends GameObject {
 
-	private Cube myHead;
-	private Cube myArmleft;
-	private Cube myArmright;
-	private Cube myTorso;
-	private Cube mylegleft;
-	private Cube mylegright;
+	private VBOCube myHead;
+	private VBOCube myArmleft;
+	private VBOCube myArmright;
+	private VBOCube myTorso;
+	private VBOCube mylegleft;
+	private VBOCube mylegright;
 	
 	private double forward = 1;
 	
 	
 	public Zombie(GameObject parent) {
 		super(parent);
-		setMyHead(new Cube(this));
+		setMyHead(new VBOCube(this));
 		double[] scale = new double[]{0.4,0.4,0.4};
 		double[] rotation = new double[]{0,0,0};
 		double[] Position = new double[]{0,1.8,0};
@@ -24,7 +24,7 @@ public class Zombie extends GameObject {
 		getMyHead().setScale(scale);
 		getMyHead().setRotation(rotation);
 		
-		myTorso = new Cube(this);
+		myTorso = new VBOCube(this);
 		scale = new double[]{0.4,0.6,0.2};
 		rotation = new double[]{0,0,0};
 		Position = new double[]{0,1,0};
@@ -34,7 +34,7 @@ public class Zombie extends GameObject {
 		
 		
 		//myArm
-		myArmleft = new Cube(this);
+		myArmleft = new VBOCube(this);
 		scale = new double[]{0.2,0.6,0.2};
 		rotation = new double[]{90,0,0};
 		Position = new double[]{0.6,1,0};
@@ -42,7 +42,7 @@ public class Zombie extends GameObject {
 		myArmleft.setScale(scale);
 		myArmleft.setRotation(rotation);
 		
-		myArmright = new Cube(this);
+		myArmright = new VBOCube(this);
 		scale = new double[]{0.2,0.6,0.2};
 		rotation = new double[]{90,0,0};
 		Position = new double[]{-0.6,1,0};
@@ -52,7 +52,7 @@ public class Zombie extends GameObject {
 		
 		
 		//myleg
-		mylegleft = new Cube(this);
+		mylegleft = new VBOCube(this);
 		scale = new double[]{0.2,0.6,0.19};
 		rotation = new double[]{0,0,0};
 		Position = new double[]{0.2,0,0};
@@ -60,14 +60,26 @@ public class Zombie extends GameObject {
 		mylegleft.setScale(scale);
 		mylegleft.setRotation(rotation);
 		
-		mylegright = new Cube(this);
+		mylegright = new VBOCube(this);
 		scale = new double[]{0.2,0.6,0.19};
 		rotation = new double[]{0,0,0};
 		Position = new double[]{-0.2,0,0};
 		mylegright.setPosition(Position);
 		mylegright.setScale(scale);
 		mylegright.setRotation(rotation);
+
 	}
+	
+	/*public void setTextures(MyTexture faceTex, MyTexture headTex, MyTexture bodyTex){
+		//System.out.println("zom tex"+ headTex.getTextureId());
+		myHead.setTextures(faceTex, headTex);
+ 		myArmleft.setTextures(bodyTex, bodyTex);
+ 		myArmright.setTextures(bodyTex, bodyTex);
+		myTorso.setTextures(bodyTex, bodyTex);
+		mylegleft.setTextures(bodyTex, bodyTex);
+		mylegright.setTextures(bodyTex, bodyTex);
+	}
+	*/
 	
 	public void drawSelf(GL2 gl) {
 		update(0);
@@ -101,12 +113,21 @@ public class Zombie extends GameObject {
     	mylegleft.rotate(angle4);
 	}
 
-	public Cube getMyHead() {
+	public VBOCube getMyHead() {
 		return myHead;
 	}
 
-	public void setMyHead(Cube myHead) {
+	public void setMyHead(VBOCube myHead) {
 		this.myHead = myHead;
+	}
+
+	public void initVBO(OtherVBO myVBO) {
+		myHead.initVBO(myVBO);
+		myArmleft.initVBO(myVBO);
+		myArmright.initVBO(myVBO);;
+		myTorso.initVBO(myVBO);;
+		mylegleft.initVBO(myVBO);;
+		mylegright.initVBO(myVBO);;
 	}
 
 }

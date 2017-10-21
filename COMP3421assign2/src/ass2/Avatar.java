@@ -67,11 +67,24 @@ public class Avatar extends GameObject {
 		mylegright.setPosition(Position);
 		mylegright.setScale(scale);
 		mylegright.setRotation(rotation);
+		
+		
+	}
+	
+	//set textures on the cubes
+	public void setTextures(MyTexture faceTex, MyTexture headTex, MyTexture bodyTex){
+		myHead.setTextures(faceTex, headTex);
+ 		myArmleft.setTextures(bodyTex,bodyTex);
+ 		myArmright.setTextures(bodyTex, bodyTex);
+		myTorso.setTextures(bodyTex, bodyTex);
+		mylegleft.setTextures(bodyTex, bodyTex);
+		mylegright.setTextures(bodyTex, bodyTex);
 	}
 	
 	public void drawSelf(GL2 gl) {
 		update(0);
 		
+		System.out.println("position"+this.getGlobalPosition()[0]+ " " + this.getGlobalPosition()[2]);
 	    gl.glTranslated(0, -0.68, 0);
 		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
 	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};

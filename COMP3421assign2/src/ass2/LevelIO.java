@@ -76,6 +76,28 @@ public class LevelIO {
                 terrain.addRoad(w, spine);
             }
         }
+        
+        if (jsonTerrain.has("trees")) {
+            JSONArray jsonTrees = jsonTerrain.getJSONArray("trees");
+            for (int i = 0; i < jsonTrees.length(); i++) {
+                JSONObject jsonTree = jsonTrees.getJSONObject(i);
+                double x = jsonTree.getDouble("x");
+                double z = jsonTree.getDouble("z");
+                terrain.addTree(x, z);
+            }
+        }
+        if (jsonTerrain.has("others")) {
+            JSONArray jsonOthers = jsonTerrain.getJSONArray("others");
+            for (int i = 0; i < jsonOthers.length(); i++) {
+                JSONObject jsonTree = jsonOthers.getJSONObject(i);
+                double x = jsonTree.getDouble("x");
+                double z = jsonTree.getDouble("z");
+                terrain.addZombie(x, z);
+            }
+        }
+        
+        
+        
         return terrain;
     }
 

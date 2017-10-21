@@ -4,6 +4,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.List;
+
 import com.jogamp.opengl.*;
 import com.jogamp.opengl.awt.GLJPanel;
 import javax.swing.JFrame;
@@ -219,20 +221,66 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         gl.glLightModelfv(GL2.GL_LIGHT_MODEL_AMBIENT, globAmb,0); // Global ambient light.
         gl.glLightModeli(GL2.GL_LIGHT_MODEL_LOCAL_VIEWER, GL2.GL_TRUE); // Enable local viewpoint.
         
-        //Texture initialisation
-        String groundTextureFileName1 = "src/ass2/grass.bmp";
-        MyTexture groundTexture = new MyTexture(gl,groundTextureFileName1,"bmp",true);
-        myTerrain.setGroundTexture(groundTexture);
-        gl.glEnable(GL2.GL_TEXTURE_2D); 
         
         //Objects initialisation
         myTerrain.addAvatar();
+       
+        //Initalise Zombie VBOs
+        myTerrain.othersVBOInit(gl);
         
-        myTerrain.addZombie();
-        myTerrain.addZombie();
-        myTerrain.addZombie();
+       // myTerrain.addZombie(gl);
+        //myTerrain.addZombie(gl);
+        //myTerrain.addZombie(gl);
+        
         
         myTerrain.addPortal();
+       
+        initialiseTextures(gl);
+        
+        gl.glEnable(GL2.GL_TEXTURE_2D); 
+	}
+	
+	public void initialiseTextures(GL2 gl ){
+	      //Texture initialisation 
+		//List<MyTexture> textures;
+		
+        String groundTextureFileName = "src/ass2/grass.bmp";
+        MyTexture groundTexture = new MyTexture(gl,groundTextureFileName,"bmp",true);
+        String treeTopTextureFileName = "src/ass2/leaves.jpg";
+        MyTexture treeTopTexture = new MyTexture(gl,treeTopTextureFileName,"jpg",true);
+        String treeTrunkTextureFileName = "src/ass2/bark.jpg";
+        MyTexture treeTrunkTexture = new MyTexture(gl,treeTrunkTextureFileName,"jpg",true);
+        String roadTextureFileName = "src/ass2/yellowRock.jpg";
+        MyTexture roadTexture = new MyTexture(gl,roadTextureFileName,"jpg",true);
+        
+        //Avatar textures
+        String headTexFileName = "src/ass2/hair.bmp";
+        MyTexture headTex = new MyTexture(gl, headTexFileName,"bmp",true);
+        String faceTexFileName = "src/ass2/avatarFace.bmp";
+        MyTexture faceTex = new MyTexture(gl,faceTexFileName,"bmp",true);
+        String bodyTexFileName = "src/ass2/avatarBody.bmp";
+        MyTexture bodyTex = new MyTexture(gl,bodyTexFileName,"bmp",true);
+        /*
+        
+        //Zombie Textures
+        String ZheadTexFileName = "src/ass2/zombieBody.bmp";
+        MyTexture ZheadTex = new MyTexture(gl,ZheadTexFileName,"bmp",true);
+        String ZFaceTexFileName = "src/ass2/zombieFace.bmp";
+        MyTexture ZFaceTex = new MyTexture(gl,ZFaceTexFileName,"bmp",true);
+        String ZBodyTexFileName = "src/ass2/zombieBody.bmp";
+        MyTexture ZBodyTex = new MyTexture(gl,ZBodyTexFileName,"bmp",true);
+       // System.out.println(ZtorsoTex.getTextureId());
+        */
+        
+        //Portal Textures
+        String ATextureFileName = "src/ass2/rock_norm.bmp";
+        MyTexture ATex = new MyTexture(gl,ATextureFileName,"bmp",true);
+        String BTextureFileName = "src/ass2/rock_norm.bmp";
+        MyTexture BTex = new MyTexture(gl,BTextureFileName,"bmp",true);
+        
+        myTerrain.setTextures(groundTexture, treeTopTexture, treeTrunkTexture, roadTexture,faceTex, 
+        		headTex, bodyTex, ATex, BTex );
+        
 	}
 	@Override
 	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
@@ -256,7 +304,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         if(FPcamera){
         	gl.glRotated(angle,1,0,0);
         	gl.glRotated(angle2,0,1,0);
-        	gl.glTranslated(0, -(Terrain.altitude(10-Game.positionX,10-Game.positionZ)+1), 0);
+        	gl.glTranslated(0, -(Terrain.altitude(myTerrain.getsize().width-Game.positionX,myTerrain.getsize().height-Game.positionZ)+1), 0);
         }else{
         	gl.glTranslated(0, 0, -20);
         	gl.glRotated(angle+45,1,0,0);
@@ -395,6 +443,6 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 			positionZ = positionZ-finalspeed*Math.sin(angle2/180*Math.PI);
 		}
 		
-		myTerrain.setPosition(Game.positionX-10, 0, Game.positionZ-10);
+		myTerrain.setPosition(Game.positionX-myTerrain.getsize().width, 0, Game.positionZ-myTerrain.getsize().height);
 		}
 }
