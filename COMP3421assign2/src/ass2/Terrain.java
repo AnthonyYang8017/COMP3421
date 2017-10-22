@@ -49,7 +49,7 @@ public class Terrain extends GameObject {
 	}
     public Terrain(int width, int depth) {
     	this(GameObject.ROOT);
-        mySize = new Dimension(width, depth);
+        setMySize(new Dimension(width, depth));
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
@@ -68,7 +68,7 @@ public class Terrain extends GameObject {
     }
 
     public Dimension getsize() {
-        return mySize;
+        return getMySize();
     }
 
     public List<Tree> gettrees() {
@@ -91,7 +91,7 @@ public class Terrain extends GameObject {
      * @return
      */
     public static double getGridAltitude(int x, int z) {
-    	if(x+1<=mySize.width&&z+1<=mySize.height&&x>=0&&z>=0){
+    	if(x+1<=getMySize().width&&z+1<=getMySize().height&&x>=0&&z>=0){
     		return myAltitude[x][z];
     	}
         return 0.0;
@@ -119,7 +119,7 @@ public class Terrain extends GameObject {
      * @param height
      */
     public void setSize(int width, int height) {
-        mySize = new Dimension(width, height);
+        setMySize(new Dimension(width, height));
         double[][] oldAlt = myAltitude;
         myAltitude = new double[width][height];
         
@@ -161,7 +161,7 @@ public class Terrain extends GameObject {
         double heightX1Z1 = getGridAltitude((int)i+1,(int)j+1);
         double temi = x-i;
         double temj = z-j;
-        if (temi + temj <= 1){
+        if ((temi + temj) <= 1){
         	altitude = (heightXZ + (heightX1Z - heightXZ)*temi)
         			+((heightXZ1 + (heightX1Z - heightXZ1)*temi)
         			-(heightXZ + (heightX1Z - heightXZ)*temi))
@@ -205,7 +205,7 @@ public class Terrain extends GameObject {
     public void addAvatar() {
     	myAvatar = new Avatar(this);
     	myAvatar.setPosition(0,altitude(0,0)+getMyAvatarY(),0);
-    	double[] scale = new double[]{0.5,0.45,0.5};
+    	double[] scale = new double[]{0.5,0.5,0.5};
     	myAvatar.setScale(scale);
 	}
     
@@ -231,21 +231,23 @@ public class Terrain extends GameObject {
     
     public void addZombie(double x, double z) {
         double y = altitude(x, z);
-        Zombie zombie = new Zombie(this);
-        zombie.setPosition(x, y, z);
-        myZombies.add(zombie);
+        Zombie myZombie = new Zombie(this);
+        myZombie.setPosition(x, y, z);
+        double[] scale = new double[]{0.5,0.45,0.5};
+    	myZombie.setScale(scale);
+        myZombies.add(myZombie);
     }
     
     
     public void addPortal() {
     	myPortals = new Portals(this);
     	System.out.println(myPortals.testInit());
-    	PortalA = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
+    	PortalA = ThreadLocalRandom.current().nextInt(0,getMySize().height-1);
     	double[] position = new double[]{0,altitude(0,PortalA)+9.1,PortalA};
     	myPortals.PortalA.setPosition(position);
     	
-    	PortalB = ThreadLocalRandom.current().nextInt(0,mySize.height-1);
-    	position = new double[]{mySize.width-1,altitude(mySize.width-1,PortalB)+9.1,PortalB};
+    	PortalB = ThreadLocalRandom.current().nextInt(0,getMySize().height-1);
+    	position = new double[]{getMySize().width-1,altitude(getMySize().width-1,PortalB)+9.1,PortalB};
     	myPortals.PortalB.setPosition(position);
     	System.out.println("Added portals "+ myPortals.testInit());
     	
@@ -255,8 +257,6 @@ public class Terrain extends GameObject {
 		
 		gl.glPushMatrix();
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-		//gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		//gl.glColor4d(0, 0, 0, 0);
 		gl.glLineWidth(10);
 		
 		float[] ambient = {0.1f, 0.5f, 0.1f, 1.0f};
@@ -272,9 +272,9 @@ public class Terrain extends GameObject {
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT); 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, groundTexture.getTextureId());
 	 
-        System.out.println("textureSize" + mySize.width + " " +mySize.height);
-	    for (int z = 0; z < mySize.height -1; z++) {
-	        for (int x = 0; x < mySize.width -1; x++) {
+        System.out.println("textureSize" + getMySize().width + " " +getMySize().height);
+	    for (int z = 0; z < getMySize().height -1; z++) {
+	        for (int x = 0; x < getMySize().width -1; x++) {
 	        	double[] v;
 	            gl.glBegin(GL2.GL_TRIANGLES);
 	            {
@@ -328,18 +328,18 @@ public class Terrain extends GameObject {
 	    //should put in update but it's not working!!!
 		if(!forwardPortal){
 			if(myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1){
-				Game.positionX = 11-mySize.width;
-				Game.positionZ = mySize.height-PortalB;
-			}else if(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1){
-				Game.positionX = mySize.width;
-				Game.positionZ = mySize.height-PortalA;
+				Game.positionX = 11-getMySize().width;
+				Game.positionZ = getMySize().height-PortalB;
+			}else if(myAvatar.getPosition()[0] > getMySize().width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1){
+				Game.positionX = getMySize().width;
+				Game.positionZ = getMySize().height-PortalA;
 			}
 			forwardPortal = !forwardPortal;
 		}
 		
-	    myAvatar.setPosition(mySize.width-Game.positionX, altitude(mySize.width-Game.positionX,mySize.height-Game.positionZ)+getMyAvatarY(), mySize.height-Game.positionZ);
+	    myAvatar.setPosition(getMySize().width-Game.positionX, altitude(getMySize().width-Game.positionX,getMySize().height-Game.positionZ)+getMyAvatarY(), getMySize().height-Game.positionZ);
 	    if((myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1)||
-	    		(myAvatar.getPosition()[0] > mySize.width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
+	    		(myAvatar.getPosition()[0] > getMySize().width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
 	    	forwardPortal = !forwardPortal;
 	    
 	    double[] rotation ;
@@ -381,8 +381,7 @@ public class Terrain extends GameObject {
 	    	myAvatar.rotate(rotation);
 	    }
 	   
-	}
-	    /*for (Zombie element : myZombies) {
+	for (Zombie element : myZombies) {
 	    	rotation = element.getRotation();
 	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
 	    	element.translate(rotation);
@@ -408,7 +407,7 @@ public class Terrain extends GameObject {
 			    	rotation = new double[]{0,0,0};
 		    	}
 	    	}else{
-	    		position = new double[]{mySize.width,0,mySize.height};
+	    		position = new double[]{getMySize().width,0,getMySize().height};
 	    		ans = (((position[0]-rotation[0])
 		    			/Math.abs(position[0]-rotation[0]))+2)*90
 		    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
@@ -426,11 +425,11 @@ public class Terrain extends GameObject {
 	    	}
 	    	element.rotate(rotation);
 	    }
-    }*/
+    }
 	
 	public double[] NormalProcesser(int x, double y, int z) {
 		double[] normal;
-		if( x > 0 && x < mySize.width-1 && z > 0 && z < mySize.height-1){
+		if( x > 0 && x < getMySize().width-1 && z > 0 && z < getMySize().height-1){
 			double[] v1 = new double[]{x-1, getGridAltitude(x-1, z), z};
 			double[] v2 = new double[]{x+1, getGridAltitude(x+1, z), z};
 			double[] v3 = new double[]{x, getGridAltitude(x, z-1), z-1};
@@ -475,4 +474,10 @@ public class Terrain extends GameObject {
 		   z.initVBO(myVBO);
 	   }
    }
+public static Dimension getMySize() {
+	return mySize;
+}
+public static void setMySize(Dimension mySize) {
+	Terrain.mySize = mySize;
+}
 }
