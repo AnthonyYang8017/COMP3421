@@ -71,9 +71,13 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         
         // create a panel to draw on
         GLJPanel panel = new GLJPanel(caps);
-        
-        //Terrain terrain = LevelIO.load(new File(args[0]));
-        Terrain terrain = LevelIO.load(new File("test.txt"));
+        Terrain terrain;
+        if (args.length >= 1){
+        	 terrain = LevelIO.load(new File(args[0]));
+        }
+        else {
+        	terrain = LevelIO.load(new File("test.txt"));
+        }
         Game game = new Game(terrain);
         positionX = positionZ = Terrain.getMySize().width/2;
         
@@ -120,7 +124,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 		a = (float) ((float) (factor*a)+0.1);
 		d = (float) ((float) (factor*d)+0.1);
 		s = (float) ((float) (factor*s)+0.1);
-		//System.out.println(factor);
+
 		float dusk;
 		if(counter>90&&counter<270){
 			dusk = (float) ((90-Math.abs(counter-180))*0.01 + a);
@@ -180,7 +184,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         float spotDirection[] = {0.0f, 0.0f, -1.0f};
         float spotAngle = 45.0f;
         
-    	gl.glPushMatrix();{
+    	gl.glPushMatrix();{ //move camera
     		gl.glTranslated(0, Terrain.myAvatar.getPosition()[1], 0);
     		gl.glRotated(Terrain.myAvatar.getRotation()[1], 0.0, 1.0, 0.0);
     		gl.glTranslated(0, 0, -0.1);
@@ -199,7 +203,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
     			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emmL,0);
     			GLUT glut = new GLUT();
     			glut.glutSolidSphere(0.1, 20, 20);
-    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, specular,0);
+    			gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, specular,0); 
 		}gl.glPopMatrix();
 	}
 	@Override
@@ -227,13 +231,9 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         myTerrain.addAvatar();
        
         //Initalise Zombie VBOs
-        myTerrain.othersVBOInit(gl);
+        myTerrain.othersVBOInit(gl); 
         
-        //myTerrain.addZombie(gl);
-        //myTerrain.addZombie(gl);
-        //myTerrain.addZombie(gl);
-        
-        
+        //add portals
         myTerrain.addPortal();
        
         initialiseTextures(gl);
@@ -242,9 +242,9 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
 	}
 	
 	public void initialiseTextures(GL2 gl ){
-	      //Texture initialisation 
-		//List<MyTexture> textures;
+	    //load textures
 		
+		//terrain textures
         String groundTextureFileName = "src/ass2/grass.bmp";
         MyTexture groundTexture = new MyTexture(gl,groundTextureFileName,"bmp",true);
         String treeTopTextureFileName = "src/ass2/leaves.jpg";
@@ -261,17 +261,6 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture faceTex = new MyTexture(gl,faceTexFileName,"bmp",true);
         String bodyTexFileName = "src/ass2/avatarBody.bmp";
         MyTexture bodyTex = new MyTexture(gl,bodyTexFileName,"bmp",true);
-        /*
-        
-        //Zombie Textures
-        String ZheadTexFileName = "src/ass2/zombieBody.bmp";
-        MyTexture ZheadTex = new MyTexture(gl,ZheadTexFileName,"bmp",true);
-        String ZFaceTexFileName = "src/ass2/zombieFace.bmp";
-        MyTexture ZFaceTex = new MyTexture(gl,ZFaceTexFileName,"bmp",true);
-        String ZBodyTexFileName = "src/ass2/zombieBody.bmp";
-        MyTexture ZBodyTex = new MyTexture(gl,ZBodyTexFileName,"bmp",true);
-       // System.out.println(ZtorsoTex.getTextureId());
-        */
         
         //Portal Textures
         String ATextureFileName = "src/ass2/rock_norm.bmp";

@@ -26,7 +26,6 @@ public class Terrain extends GameObject {
     static Avatar myAvatar;
     private List<Zombie> myZombies;
     private OtherVBO myVBO;
-   // private List<VBOCube> myOthers;
     
     private Portals myPortals;
     private Integer PortalA;
@@ -53,7 +52,6 @@ public class Terrain extends GameObject {
         myAltitude = new double[width][depth];
         myTrees = new ArrayList<Tree>();
         myRoads = new ArrayList<Road>();
-      //  myOthers = new ArrayList<VBOCube>();
         myZombies = new ArrayList<Zombie>();
         mySunlight = new float[3];
         
@@ -145,7 +143,6 @@ public class Terrain extends GameObject {
      * Get the altitude at an arbitrary point. 
      * Non-integer points should be interpolated from neighbouring grid points
      * 
-     * TO BE COMPLETED
      * 
      * @param x
      * @param z
@@ -210,25 +207,7 @@ public class Terrain extends GameObject {
 	}
     
     
-    /*
-    public void addZombie(GL2 gl) {
-    	Zombie myZombie = new Zombie(this);
-    	double randomNum = ThreadLocalRandom.current().nextDouble(0,1);
-    	double randomNumX = (randomNum * (mySize.width-1));
-    	randomNum = ThreadLocalRandom.current().nextDouble(0,1);
-    	double randomNumY = (randomNum * (mySize.height-1));
-    	myZombie.setPosition(randomNumX,altitude(randomNumX,randomNumY)+getMyAvatarY(),randomNumY);
-    	randomNum = ThreadLocalRandom.current().nextDouble(0,1);
-
-    	double random = randomNum/10;
-    	double[] scale = new double[]{0.5+random,0.45+random,0.5+random};
-    	myZombie.setScale(scale);
-    	
-    	//initialise VBO stuff
-    	
-    	myZombies.add(myZombie);
-	}*/
-    
+    //add a zombie at the specified position
     public void addZombie(double x, double z) {
         double y = altitude(x, z);
         Zombie myZombie = new Zombie(this);
@@ -238,7 +217,7 @@ public class Terrain extends GameObject {
         myZombies.add(myZombie);
     }
     
-    
+
     public void addPortal() {
     	myPortals = new Portals(this);
     	System.out.println(myPortals.testInit());
@@ -259,6 +238,7 @@ public class Terrain extends GameObject {
 		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		gl.glLineWidth(10);
 		
+		//lighting
 		float[] ambient = {0.1f, 0.5f, 0.1f, 1.0f};
 	    float[] diffuse = {0.1f, 0.5f, 0.1f, 1.0f};
 	    float[] specular = {0.1f, 0.1f, 0.1f, 1.0f};
@@ -267,13 +247,14 @@ public class Terrain extends GameObject {
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
 	    
+	    //textures
 	    gl.glTexEnvf(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
         gl.glTexParameteri(GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT); 
         gl.glBindTexture(GL2.GL_TEXTURE_2D, groundTexture.getTextureId());
 	 
-        System.out.println("textureSize" + getMySize().width + " " +getMySize().height);
-	    for (int z = 0; z < getMySize().height -1; z++) {
+       // System.out.println("textureSize" + getMySize().width + " " +getMySize().height);
+	    for (int z = 0; z < getMySize().height -1; z++) {	//draw one side of  terrain polygons
 	        for (int x = 0; x < getMySize().width -1; x++) {
 	        	double[] v;
 	            gl.glBegin(GL2.GL_TRIANGLES);
@@ -296,7 +277,7 @@ public class Terrain extends GameObject {
 	            }
 	            gl.glEnd();
 	            
-	            gl.glBegin(GL2.GL_TRIANGLES);
+	            gl.glBegin(GL2.GL_TRIANGLES);	//draw the other side of  terrain polygons
 	            {
 	              
 	              v = NormalProcesser(x + 1, getGridAltitude(x + 1, z), z);
@@ -325,8 +306,8 @@ public class Terrain extends GameObject {
 	}
 	
 	public void update(double dt) {
-	    //should put in update but it's not working!!!
-		if(!forwardPortal){
+		//update avatar position
+		if(!forwardPortal){	//teleport position of avatar if it passes through the portal
 			if(myAvatar.getPosition()[0] < 0 && Math.abs(myAvatar.getPosition()[2]-PortalA) < 1){
 				Game.positionX = 11-getMySize().width;
 				Game.positionZ = getMySize().height-PortalB;
@@ -342,6 +323,7 @@ public class Terrain extends GameObject {
 	    		(myAvatar.getPosition()[0] > getMySize().width-1 && Math.abs(myAvatar.getPosition()[2]-PortalB) < 1))
 	    	forwardPortal = !forwardPortal;
 	    
+	    //update rotation if a key is being pressed
 	    double[] rotation ;
 	    if(Game.pressW||Game.pressS||Game.pressA||Game.pressD){
 	    	rotation = new double[]{0,-Game.angle2,0};
@@ -358,6 +340,7 @@ public class Terrain extends GameObject {
 	    	myAvatar.show(true);
 	    }
 		
+	    //diagonal rotation
 	    if(Game.pressA&&Game.pressW){
 	    	rotation = new double[]{0,45,0};
 	    	myAvatar.rotate(rotation);
@@ -380,7 +363,8 @@ public class Terrain extends GameObject {
 	    	rotation = new double[]{0,-180,0};
 	    	myAvatar.rotate(rotation);
 	    }
-	   
+	 
+	//update zombie postion
 	for (Zombie element : myZombies) {
 	    	rotation = element.getRotation();
 	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
@@ -394,7 +378,6 @@ public class Terrain extends GameObject {
 	    			+((Math.atan((rotation[2]-position[2])/(position[0]-rotation[0]))
 	    			*(180/Math.PI)));
 	    	ans = ((ans + 180.0) % 360.0 + 360.0) % 360.0 - 180.0;
-
 	    	
 	    	if(((position[0]-rotation[0])*(position[0]-rotation[0]))+((rotation[2]-position[2])*(rotation[2]-position[2])) <= 30){
 	    		if((ans-element.getRotation()[1]<=180&&ans-element.getRotation()[1]>0)||ans-element.getRotation()[1]<-180){
@@ -448,7 +431,7 @@ public class Terrain extends GameObject {
 		this.myAvatarY = myAvatarY;
 	}
 	
-	//set textures for all Gameobjects
+	//set textures for all  textured Gameobjects
     public void setTextures (MyTexture ground, MyTexture treeTop, MyTexture treeTrunk, MyTexture road, MyTexture avFace,  MyTexture headTex,
     		MyTexture bodyTex, MyTexture ATex, MyTexture BTex ){
 		groundTexture = ground;
@@ -458,19 +441,16 @@ public class Terrain extends GameObject {
 		for(Road r: myRoads){
 			r.setTexture(road);
 		}
-		/*
-		for(Zombie z: myZombies){
-			z.setTextures(zFace,ZheadTex, ZBodyTex);
-		}*/
 		
     	myAvatar.setTextures(avFace, headTex,  bodyTex);
 		myPortals.setTextures(ATex, BTex);   	
     }
     
+    
+   //set all the others to use the cube VBO and shader
    public void  othersVBOInit(GL2 gl){
 	   myVBO = new OtherVBO(gl);
 	   for (Zombie z: myZombies){
-		   System.out.println("TEST");
 		   z.initVBO(myVBO);
 	   }
    }

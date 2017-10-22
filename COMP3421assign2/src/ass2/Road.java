@@ -1,6 +1,7 @@
 package ass2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.jogamp.opengl.GL2;
@@ -88,8 +89,11 @@ public class Road extends GameObject {
     		roadPoints.add(p[0] + normal1[0] );
     		roadPoints.add(p[1] + normal1[1] );
     		
-    		//keep track of altitude
-    		altitudes.add(Terrain.altitude(p[0], p[1]));
+    		//keep track of altitudes
+    		altitudes.add(Terrain.altitude(p[0] - normal1[0], p[1] - normal1[1]));
+    		
+    		altitudes.add(Terrain.altitude(p[0] + normal1[0], p[1] + normal1[1]));
+    		
     	}
     }
 
@@ -215,45 +219,52 @@ public class Road extends GameObject {
     public void drawSelf(GL2 gl) {
     	gl.glPushMatrix();
 		gl.glEnable(GL2.GL_TEXTURE_2D);
+		
+		//texture
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
 		
-		//gl.glColor4d(1, 0, 0, 0);
+		//offset to negate zfighting
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_POINT);
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_LINE);
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
 		
-//		gl.glLineWidth((float) 0.2);
+		gl.glPolygonOffset(-1, -1);
 		
-    	//System.out.println("road");
-		/*
-    	gl.glBegin(GL2.GL_LINES);{
-    		for(int i = 0; i<myPoints.size()-1;i+=2){
-    			gl.glVertex3d(myPoints.get(i), 1, roadPoints.get(i+1));
-    		}
-    	}
-    	gl.glEnd();*/
+		double maxAltitude = Collections.max(altitudes);
+		
+		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
+	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};
+	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+		
 		gl.glBegin(GL2.GL_QUADS);
         {
         	int altitudeIndex = 0;
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
-	        	//System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
 	        	gl.glTexCoord2d(1, 1);
-	        	//System.out.println( "alt " + (Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1 ));
-	        	//System.out.println( "alt1 " + Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)) + 0.1 ));
-	        	//System.out.println( "alt2 " + Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7) + 0.2 ));
-	        	//System.out.println( "alt3 " + Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5) + 0.2 ));
-	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1, roadPoints.get(i+1));
+	        	gl.glVertex3d(roadPoints.get(i), maxAltitude , roadPoints.get(i+1));
 	        	gl.glTexCoord2d(1, 0);
-	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3))+0.1, roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+2),maxAltitude, roadPoints.get(i+3));
 	        	gl.glTexCoord2d(0, 0);
-	        	gl.glVertex3d(roadPoints.get(i+6),Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7))+0.1, roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+6),maxAltitude, roadPoints.get(i+7));
 	        	gl.glTexCoord2d(0, 1);
-	        	gl.glVertex3d(roadPoints.get(i+4),Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5))+0.1, roadPoints.get(i+5));
+	        	gl.glVertex3d(roadPoints.get(i+4),maxAltitude, roadPoints.get(i+5));
 	        	altitudeIndex++;
 	        	
 	        } 
         }
         gl.glEnd();
-		
+       
+        gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_POINT);
+        		gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_LINE);
+        		gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_FILL);
 		
 		gl.glPopMatrix();
     }
