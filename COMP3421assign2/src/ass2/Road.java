@@ -215,23 +215,13 @@ public class Road extends GameObject {
     public void drawSelf(GL2 gl) {
     	gl.glPushMatrix();
 		gl.glEnable(GL2.GL_TEXTURE_2D);
+		
+		//texture
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT); 
 		gl.glTexParameteri( GL2.GL_TEXTURE_2D, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 		gl.glBindTexture(GL2.GL_TEXTURE_2D, texture.getTextureId());
 		
-		//gl.glColor4d(1, 0, 0, 0);
-		
-//		gl.glLineWidth((float) 0.2);
-		
-    	//System.out.println("road");
-		/*
-    	gl.glBegin(GL2.GL_LINES);{
-    		for(int i = 0; i<myPoints.size()-1;i+=2){
-    			gl.glVertex3d(myPoints.get(i), 1, roadPoints.get(i+1));
-    		}
-    	}
-    	gl.glEnd();*/
-		
+		//offset to negate zfighting
 		gl.glEnable(GL2.GL_POLYGON_OFFSET_POINT);
 		gl.glEnable(GL2.GL_POLYGON_OFFSET_LINE);
 		gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
@@ -242,12 +232,7 @@ public class Road extends GameObject {
         {
         	int altitudeIndex = 0;
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
-	        	//System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
 	        	gl.glTexCoord2d(1, 1);
-	        	//System.out.println( "alt " + (Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1 ));
-	        	//System.out.println( "alt1 " + Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)) + 0.1 ));
-	        	//System.out.println( "alt2 " + Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7) + 0.2 ));
-	        	//System.out.println( "alt3 " + Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5) + 0.2 ));
 	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) , roadPoints.get(i+1));
 	        	gl.glTexCoord2d(1, 0);
 	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)), roadPoints.get(i+3));
@@ -260,6 +245,7 @@ public class Road extends GameObject {
 	        } 
         }
         gl.glEnd();
+       
         gl.glDisable(
         		GL2.GL_POLYGON_OFFSET_POINT);
         		gl.glDisable(
