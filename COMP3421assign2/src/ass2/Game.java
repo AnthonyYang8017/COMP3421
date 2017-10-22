@@ -76,7 +76,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         	 terrain = LevelIO.load(new File(args[0]));
         }
         else {
-        	terrain = LevelIO.load(new File("test.txt"));
+        	terrain = LevelIO.load(new File("test7"));
         }
         Game game = new Game(terrain);
         positionX = positionZ = Terrain.getMySize().width/2;

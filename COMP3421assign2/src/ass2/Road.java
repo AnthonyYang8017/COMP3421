@@ -1,6 +1,7 @@
 package ass2;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.jogamp.opengl.GL2;
@@ -88,8 +89,11 @@ public class Road extends GameObject {
     		roadPoints.add(p[0] + normal1[0] );
     		roadPoints.add(p[1] + normal1[1] );
     		
-    		//keep track of altitude
-    		altitudes.add(Terrain.altitude(p[0], p[1]));
+    		//keep track of altitudes
+    		altitudes.add(Terrain.altitude(p[0] - normal1[0], p[1] - normal1[1]));
+    		
+    		altitudes.add(Terrain.altitude(p[0] + normal1[0], p[1] + normal1[1]));
+    		
     	}
     }
 
@@ -228,18 +232,20 @@ public class Road extends GameObject {
 		
 		gl.glPolygonOffset(-1, -1);
 		
+		double maxAltitude = Collections.max(altitudes);
+		
 		gl.glBegin(GL2.GL_QUADS);
         {
         	int altitudeIndex = 0;
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
 	        	gl.glTexCoord2d(1, 1);
-	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) , roadPoints.get(i+1));
+	        	gl.glVertex3d(roadPoints.get(i), maxAltitude , roadPoints.get(i+1));
 	        	gl.glTexCoord2d(1, 0);
-	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)), roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+2),maxAltitude, roadPoints.get(i+3));
 	        	gl.glTexCoord2d(0, 0);
-	        	gl.glVertex3d(roadPoints.get(i+6),Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7)), roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+6),maxAltitude, roadPoints.get(i+7));
 	        	gl.glTexCoord2d(0, 1);
-	        	gl.glVertex3d(roadPoints.get(i+4),Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5)), roadPoints.get(i+5));
+	        	gl.glVertex3d(roadPoints.get(i+4),maxAltitude, roadPoints.get(i+5));
 	        	altitudeIndex++;
 	        	
 	        } 
