@@ -70,16 +70,6 @@ public class Zombie extends GameObject {
 
 	}
 	
-	/*public void setTextures(MyTexture faceTex, MyTexture headTex, MyTexture bodyTex){
-		//System.out.println("zom tex"+ headTex.getTextureId());
-		myHead.setTextures(faceTex, headTex);
- 		myArmleft.setTextures(bodyTex, bodyTex);
- 		myArmright.setTextures(bodyTex, bodyTex);
-		myTorso.setTextures(bodyTex, bodyTex);
-		mylegleft.setTextures(bodyTex, bodyTex);
-		mylegright.setTextures(bodyTex, bodyTex);
-	}
-	*/
 	
 	public void drawSelf(GL2 gl) {
 		update(0);
@@ -93,7 +83,7 @@ public class Zombie extends GameObject {
 	}
 	
 	@Override
-    public void update(double dt) {
+    public void update(double dt) {	//walking animation
 		double[] angle1 = new double[]{0,0,0};
 		double[] angle2 = new double[]{0,0,0};
 		double[] angle3 = new double[]{0,0,0};
@@ -121,6 +111,7 @@ public class Zombie extends GameObject {
 		this.myHead = myHead;
 	}
 
+	//set cube parts to use the cubevbo
 	public void initVBO(OtherVBO myVBO) {
 		myHead.initVBO(myVBO);
 		myArmleft.initVBO(myVBO);

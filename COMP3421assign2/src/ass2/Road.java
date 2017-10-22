@@ -234,6 +234,13 @@ public class Road extends GameObject {
 		
 		double maxAltitude = Collections.max(altitudes);
 		
+		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
+	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};
+	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
+	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+		
 		gl.glBegin(GL2.GL_QUADS);
         {
         	int altitudeIndex = 0;

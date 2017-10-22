@@ -84,20 +84,22 @@ public class Avatar extends GameObject {
 	public void drawSelf(GL2 gl) {
 		update(0);
 		
-		System.out.println("position"+this.getGlobalPosition()[0]+ " " + this.getGlobalPosition()[2]);
 	    gl.glTranslated(0, -0.68, 0);
-		float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
+		
+	    //llighting
+	    float[] ambient = {0.4f, 0.2f, 0.2f, 1.0f};
 	    float[] diffuse = {0.4f, 0.2f, 0.2f, 1.0f};
 	    float[] specular = {0.0f, 0.1f, 0.1f, 1.0f};
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, ambient, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diffuse, 0);
 	    gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, specular, 0);
+	    //actual drawing of vertices happens in the body cubes
 	}
 	
 
 	
 	
-	// not working, have to put in draw-self function, not sure why
+	// walking animation, updates arms and legs position
 	@Override
     public void update(double dt) {
 		double[] angle1 = new double[]{0,0,2};
@@ -106,7 +108,7 @@ public class Avatar extends GameObject {
 		double[] angle4 = new double[]{0,0,0};
 		
 	   
-	    if(Game.pressW||Game.pressS||Game.pressA||Game.pressD){
+	    if(Game.pressW||Game.pressS||Game.pressA||Game.pressD){	//moving, animate walking
 	    	double tem = myArmleft.getRotation()[0];
 	    	if(tem>30 || tem<-30){
 	    		forward = -forward;
