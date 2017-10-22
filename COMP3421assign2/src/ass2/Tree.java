@@ -26,4 +26,5 @@ public class Tree extends GameObject {
     	mySphere.setTexture(top);
     	myCylinder.setTexture(trunk);
     }
+
 }
