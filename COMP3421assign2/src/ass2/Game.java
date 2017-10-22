@@ -75,6 +75,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         //Terrain terrain = LevelIO.load(new File(args[0]));
         Terrain terrain = LevelIO.load(new File("test.txt"));
         Game game = new Game(terrain);
+        positionX = positionZ = Terrain.getMySize().width/2;
         
         panel.addGLEventListener(game);
         panel.addKeyListener(game);
@@ -228,7 +229,7 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         //Initalise Zombie VBOs
         myTerrain.othersVBOInit(gl);
         
-       // myTerrain.addZombie(gl);
+        //myTerrain.addZombie(gl);
         //myTerrain.addZombie(gl);
         //myTerrain.addZombie(gl);
         

@@ -16,6 +16,7 @@ public class VBOCube extends GameObject {
 	
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
+		gl.glTranslated(0, -0.7, 0);
 		vbo.drawVOB(gl);
 		gl.glPopMatrix();
 	}
