@@ -1,5 +1,5 @@
 Extensions:
-Complex walking model for the avatar and others(?): implemented in Avatar.java
-Night mode: implemented in ?
-Sun movement: implemented in ?
+Complex walking model for the avatar and others: implemented in Avatar.java and Zombie.java
+Night mode: implemented in Game
+Sun movement and changing colours: implemented in Game
 Portals you can walk through:implemented in Portals.java
