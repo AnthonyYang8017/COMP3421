@@ -237,13 +237,17 @@ public class Road extends GameObject {
 	        for(int i = 0; i<roadPoints.size()-8;i+=4){ //draw one road segment
 	        	//System.out.println(roadPoints.get(i) + "  " +roadPoints.get(i+1) );
 	        	gl.glTexCoord2d(1, 1);
-	        	gl.glVertex3d(roadPoints.get(i), altitudes.get(altitudeIndex)+0.1, roadPoints.get(i+1));
+	        	//System.out.println( "alt " + (Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1 ));
+	        	//System.out.println( "alt1 " + Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)) + 0.1 ));
+	        	//System.out.println( "alt2 " + Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7) + 0.2 ));
+	        	//System.out.println( "alt3 " + Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5) + 0.2 ));
+	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1, roadPoints.get(i+1));
 	        	gl.glTexCoord2d(1, 0);
-	        	gl.glVertex3d(roadPoints.get(i+2), altitudes.get(altitudeIndex)+0.1, roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3))+0.1, roadPoints.get(i+3));
 	        	gl.glTexCoord2d(0, 0);
-	        	gl.glVertex3d(roadPoints.get(i+6),altitudes.get(altitudeIndex+1)+0.1, roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+6),Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7))+0.1, roadPoints.get(i+7));
 	        	gl.glTexCoord2d(0, 1);
-	        	gl.glVertex3d(roadPoints.get(i+4), altitudes.get(altitudeIndex+1)+0.1, roadPoints.get(i+5));
+	        	gl.glVertex3d(roadPoints.get(i+4),Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5))+0.1, roadPoints.get(i+5));
 	        	altitudeIndex++;
 	        	
 	        } 

@@ -116,4 +116,6 @@ public class Cube extends GameObject {
 	    gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
 		
 	}
+
+
 }

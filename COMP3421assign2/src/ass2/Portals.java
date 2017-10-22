@@ -51,4 +51,7 @@ public class Portals extends GameObject {
     public void update(double dt) {
 		
 	}
+
+
+
 }
