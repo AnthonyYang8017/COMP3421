@@ -231,6 +231,13 @@ public class Road extends GameObject {
     		}
     	}
     	gl.glEnd();*/
+		
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_POINT);
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_LINE);
+		gl.glEnable(GL2.GL_POLYGON_OFFSET_FILL);
+		
+		gl.glPolygonOffset(-1, -1);
+		
 		gl.glBegin(GL2.GL_QUADS);
         {
         	int altitudeIndex = 0;
@@ -241,19 +248,24 @@ public class Road extends GameObject {
 	        	//System.out.println( "alt1 " + Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)) + 0.1 ));
 	        	//System.out.println( "alt2 " + Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7) + 0.2 ));
 	        	//System.out.println( "alt3 " + Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5) + 0.2 ));
-	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) + 0.1, roadPoints.get(i+1));
+	        	gl.glVertex3d(roadPoints.get(i), Terrain.altitude(roadPoints.get(i),roadPoints.get(i+1)) , roadPoints.get(i+1));
 	        	gl.glTexCoord2d(1, 0);
-	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3))+0.1, roadPoints.get(i+3));
+	        	gl.glVertex3d(roadPoints.get(i+2),Terrain.altitude(roadPoints.get(i+2),roadPoints.get(i+3)), roadPoints.get(i+3));
 	        	gl.glTexCoord2d(0, 0);
-	        	gl.glVertex3d(roadPoints.get(i+6),Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7))+0.1, roadPoints.get(i+7));
+	        	gl.glVertex3d(roadPoints.get(i+6),Terrain.altitude(roadPoints.get(i+6),roadPoints.get(i+7)), roadPoints.get(i+7));
 	        	gl.glTexCoord2d(0, 1);
-	        	gl.glVertex3d(roadPoints.get(i+4),Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5))+0.1, roadPoints.get(i+5));
+	        	gl.glVertex3d(roadPoints.get(i+4),Terrain.altitude(roadPoints.get(i+4),roadPoints.get(i+5)), roadPoints.get(i+5));
 	        	altitudeIndex++;
 	        	
 	        } 
         }
         gl.glEnd();
-		
+        gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_POINT);
+        		gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_LINE);
+        		gl.glDisable(
+        		GL2.GL_POLYGON_OFFSET_FILL);
 		
 		gl.glPopMatrix();
     }
