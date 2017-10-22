@@ -6,14 +6,13 @@ public class Camera extends GameObject {
 
 	public Camera(GameObject parent) {
 		super(parent);
-		
+
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public void drawSelf(GL2 gl) {
 		gl.glPushMatrix();
-			
-		
+
 		gl.glPushMatrix();
 	}
 }
