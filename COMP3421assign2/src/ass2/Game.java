@@ -71,9 +71,13 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         
         // create a panel to draw on
         GLJPanel panel = new GLJPanel(caps);
-        
-        //Terrain terrain = LevelIO.load(new File(args[0]));
-        Terrain terrain = LevelIO.load(new File("test.txt"));
+        Terrain terrain;
+        if (args.length >= 1){
+        	 terrain = LevelIO.load(new File(args[0]));
+        }
+        else {
+        	terrain = LevelIO.load(new File("test.txt"));
+        }
         Game game = new Game(terrain);
         positionX = positionZ = Terrain.getMySize().width/2;
         
@@ -261,17 +265,6 @@ public class Game extends JFrame implements GLEventListener , KeyListener{
         MyTexture faceTex = new MyTexture(gl,faceTexFileName,"bmp",true);
         String bodyTexFileName = "src/ass2/avatarBody.bmp";
         MyTexture bodyTex = new MyTexture(gl,bodyTexFileName,"bmp",true);
-        /*
-        
-        //Zombie Textures
-        String ZheadTexFileName = "src/ass2/zombieBody.bmp";
-        MyTexture ZheadTex = new MyTexture(gl,ZheadTexFileName,"bmp",true);
-        String ZFaceTexFileName = "src/ass2/zombieFace.bmp";
-        MyTexture ZFaceTex = new MyTexture(gl,ZFaceTexFileName,"bmp",true);
-        String ZBodyTexFileName = "src/ass2/zombieBody.bmp";
-        MyTexture ZBodyTex = new MyTexture(gl,ZBodyTexFileName,"bmp",true);
-       // System.out.println(ZtorsoTex.getTextureId());
-        */
         
         //Portal Textures
         String ATextureFileName = "src/ass2/rock_norm.bmp";
