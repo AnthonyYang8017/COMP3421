@@ -381,8 +381,7 @@ public class Terrain extends GameObject {
 	    	myAvatar.rotate(rotation);
 	    }
 	   
-	}
-	    /*for (Zombie element : myZombies) {
+	    for (Zombie element : myZombies) {
 	    	rotation = element.getRotation();
 	    	rotation = new double[]{-Game.speed*Math.sin(rotation[1]/180*Math.PI)*0.5,0,-Game.speed*Math.cos(rotation[1]/180*Math.PI)*0.5};
 	    	element.translate(rotation);
@@ -426,7 +425,7 @@ public class Terrain extends GameObject {
 	    	}
 	    	element.rotate(rotation);
 	    }
-    }*/
+    }
 	
 	public double[] NormalProcesser(int x, double y, int z) {
 		double[] normal;
